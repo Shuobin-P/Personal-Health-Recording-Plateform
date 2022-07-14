@@ -1,0 +1,16 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: HeathRecordingPlateform
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/personal_health_recording_plateform?serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations:
+  classpath: mapper/*.xml
+  type-aliases-package: com.google.personalhealthrecordingplateform.model
