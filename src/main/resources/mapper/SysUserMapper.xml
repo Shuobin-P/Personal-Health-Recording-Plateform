@@ -3,8 +3,111 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.google.personalhealthrecordingplateform.mapper.SysUserMapper">
-    <select id="findAll" resultType="com.google.personalhealthrecordingplateform.model.SysUser">
+
+    <!---自定义登录逻辑编写 -->
+    <resultMap id="mainMap" type="SysUser">
+        <result property="id" column="id"></result>
+        <result property="userName" column="user_name"></result>
+        <result property="password" column="password"></result>
+        <result property="sex" column="sex"></result>
+        <result property="avatar" column="avatar"></result>
+        <result property="address" column="address"></result>
+        <result property="openID" column="open_id"></result>
+        <result property="status" column="status"></result>
+        <result property="admin" column="admin"></result>
+        <result property="phoneNumber" column="phone_number"></result>
+        <!-- 这里有问题 column为id是什么鬼，数据库里面没有-->
+        <collection property="roles" column="id" ofType="SysRole" select="findRoles"/>
+    </resultMap>
+
+    <resultMap id="roleMap" type="SysRole">
+        <id column="id" property="id"/>
+        <result column="label" property="label"/>
+        <result column="code" property="code"/>
+        <!--        <collection property="menus" select="findMenus" column="id" ofType="SysMenu"/>-->
+        <!--        <collection property="permissions" select="findPermission" column="id"-->
+        <!--                    ofType="SysPermission"/>-->
+    </resultMap>
+
+    <resultMap id="menuMap" type="SysMenu">
+        <id column="id" property="id"/>
+        <result column="path" property="path"/>
+        <result column="icon" property="icon"/>
+        <result column="title" property="title"/>
+        <result column="component" property="component"/>
+    </resultMap>
+
+    <resultMap id="permissionMap" type="SysPermission">
+        <id column="id" property="id"/>
+        <result column="label" property="label"/>
+        <result column="code" property="code"/>
+    </resultMap>
+
+    <select id="findAll" resultType="SysUser">
         select *
-        from easyuser;
+        from sys_user;
+    </select>
+
+    <!--    数据库返回结果和SysUser匹配不上-->
+    <select id="findUserByUserName" resultMap="mainMap" parameterType="java.lang.String">
+        select *
+        from sys_user
+        where user_name = #{username};
+    </select>
+
+    <select id="findRoles" parameterType="int" resultMap="roleMap">
+        select *
+        from sys_role
+        <if test="userID != null">
+            where id in (select role_id from user_roles where user_id = #{userID})
+        </if>
+    </select>
+
+    <select id="findPermissions" parameterType="int" resultMap="permissionMap">
+        SELECT *
+        FROM sys_permission
+        <if test="userID != null">
+            WHERE id IN (
+            SELECT permission_id
+            FROM roles_permissions
+            WHERE role_id
+            IN (
+            SELECT role_id
+            FROM user_roles
+            WHERE user_id = #{userID}
+            )
+            )
+        </if>
+
+
+    </select>
+
+    <select id="findMenus" parameterType="int" resultMap="menuMap">
+        SELECT *
+        FROM sys_menu
+        WHERE parent_id IS NULL
+          <if test="userID != null">
+              AND id IN (
+              SELECT menu_id FROM roles_menus WHERE role_id IN (SELECT role_id FROM user_roles WHERE user_id = #{userID}));
+          </if>
+
+
+
+    </select>
+
+    <select id="findChildrenMenus" parameterType="int" resultType="SysMenu">
+        select *
+        from sys_menu
+        where parent_id = #{parentID}
+        <if test="userID != null">
+            AND id IN (
+            SELECT menu_id
+            FROM roles_menus
+            WHERE role_id IN (
+                SELECT role_id
+                FROM user_roles
+                WHERE user_id = #{userID}));
+        </if>
+
     </select>
 </mapper>

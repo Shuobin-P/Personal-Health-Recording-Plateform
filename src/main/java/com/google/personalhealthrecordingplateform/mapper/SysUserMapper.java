@@ -1,5 +1,8 @@
 package com.google.personalhealthrecordingplateform.mapper;
 
+import com.google.personalhealthrecordingplateform.model.SysMenu;
+import com.google.personalhealthrecordingplateform.model.SysPermission;
+import com.google.personalhealthrecordingplateform.model.SysRole;
 import com.google.personalhealthrecordingplateform.model.SysUser;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -10,5 +13,23 @@ public interface SysUserMapper {
 
     List<SysUser> findAll();
 
-    SysUser selectByID(Integer id);
+    SysUser selectByID(Integer userID);
+
+    SysUser findUserByUserName(String username);
+
+    List<SysRole> findRoles(Long userID);
+
+    List<SysMenu> findMenus(Long userID);
+
+    /**
+     * 根据父级ID和用户ID查询子菜单
+     *
+     * @param parentID
+     * @param userID
+     * @return
+     */
+    List<SysMenu> findChildrenMenus(Long parentID, Long userID);
+
+    List<SysPermission> findPermissions(Long userID);
+
 }

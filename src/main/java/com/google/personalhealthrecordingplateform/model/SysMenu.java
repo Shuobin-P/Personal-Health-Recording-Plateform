@@ -1,6 +1,9 @@
 package com.google.personalhealthrecordingplateform.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class SysMenu {
@@ -13,4 +16,10 @@ public class SysMenu {
     private String path;
 
     private String icon;
+
+    @ApiModelProperty(value = "组件名")
+    private String component;
+
+    @ApiModelProperty(value = "子菜单")
+    private List<SysMenu> children;
 }
