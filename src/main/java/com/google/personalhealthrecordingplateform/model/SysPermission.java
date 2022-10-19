@@ -6,7 +6,7 @@ import lombok.Data;
 public class SysPermission {
     private Long id;
 
-    private String name;
+    private String label;
 
-    private String permission;
+    private String code;
 }
