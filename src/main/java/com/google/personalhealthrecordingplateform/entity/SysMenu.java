@@ -3,10 +3,11 @@ package com.google.personalhealthrecordingplateform.model;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class SysMenu {
+public class SysMenu implements Serializable {
     private Long id;
 
     private Long parent_id;
