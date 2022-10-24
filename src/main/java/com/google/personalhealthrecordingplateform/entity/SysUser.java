@@ -1,5 +1,7 @@
 package com.google.personalhealthrecordingplateform.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,10 +13,14 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
+@JsonIgnoreProperties({"enabled", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "authorities"})
 public class SysUser implements UserDetails {
     private Long id;
     @ApiModelProperty(value = "用户名")
     private String userName;
+
+    @ApiModelProperty(value = "返回给前端的用户名")
+    private String name;
     @ApiModelProperty(value = "密码")
     private String password;
     @ApiModelProperty(value = "昵称")
@@ -55,6 +61,7 @@ public class SysUser implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return this.userName;
     }
@@ -75,6 +82,7 @@ public class SysUser implements UserDetails {
     }
 
     @Override
+
     public boolean isCredentialsNonExpired() {
         return false;
     }
@@ -83,6 +91,7 @@ public class SysUser implements UserDetails {
     public boolean isEnabled() {
         return status == 0 ? false : true;
     }
+
 
     public boolean isAdmin() {
         return this.admin == 1 ? true : false;
