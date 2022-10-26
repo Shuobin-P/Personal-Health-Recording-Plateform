@@ -1,6 +1,6 @@
 package com.google.personalhealthrecordingplateform;
 
-import com.google.personalhealthrecordingplateform.model.SysUser;
+import com.google.personalhealthrecordingplateform.entity.SysUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,6 +1,6 @@
-package com.google.personalhealthrecordingplateform.exceptions;
+package com.google.personalhealthrecordingplateform.exception;
 
-import com.google.personalhealthrecordingplateform.utils.Result;
+import com.google.personalhealthrecordingplateform.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

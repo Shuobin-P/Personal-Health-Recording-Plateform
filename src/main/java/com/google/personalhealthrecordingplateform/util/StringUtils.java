@@ -1,4 +1,4 @@
-package com.google.personalhealthrecordingplateform.utils;
+package com.google.personalhealthrecordingplateform.util;
 
 import java.util.Collection;
 import java.util.Map;

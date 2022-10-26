@@ -1,4 +1,4 @@
-package com.google.personalhealthrecordingplateform.model;
+package com.google.personalhealthrecordingplateform.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

@@ -1,7 +1,7 @@
-package com.google.personalhealthrecordingplateform.configs.security;
+package com.google.personalhealthrecordingplateform.security;
 
-import com.google.personalhealthrecordingplateform.configs.security.content.SecurityContent;
-import com.google.personalhealthrecordingplateform.configs.security.handler.JwtAuthenticationFilter;
+import com.google.personalhealthrecordingplateform.security.content.SecurityContent;
+import com.google.personalhealthrecordingplateform.security.handler.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

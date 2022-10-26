@@ -1,4 +1,4 @@
-package com.google.personalhealthrecordingplateform.model;
+package com.google.personalhealthrecordingplateform.entity;
 
 import lombok.Data;
 
@@ -9,4 +9,6 @@ public class SysRole implements Serializable {
     private Long id;
     private String label;
     private String code;
+    private boolean status;
+
 }
