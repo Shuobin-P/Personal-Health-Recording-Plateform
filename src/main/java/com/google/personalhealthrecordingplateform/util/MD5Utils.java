@@ -1,4 +1,4 @@
-package com.google.personalhealthrecordingplateform.utils;
+package com.google.personalhealthrecordingplateform.util;
 
 import lombok.extern.slf4j.Slf4j;
 

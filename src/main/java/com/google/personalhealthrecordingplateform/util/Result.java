@@ -1,4 +1,4 @@
-package com.google.personalhealthrecordingplateform.utils;
+package com.google.personalhealthrecordingplateform.util;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -19,7 +19,6 @@ public class Result implements Serializable {
 
     public Result() {
     }
-
 
     public Result(boolean flag, String message, Object data) {
         this.flag = flag;

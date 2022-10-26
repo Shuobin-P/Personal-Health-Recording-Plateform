@@ -1,5 +1,5 @@
 server:
-  port: 9000
+  port: 8000
 
 spring:
   application:
@@ -9,10 +9,15 @@ spring:
     password: 123456
     url: jdbc:mysql://localhost:3306/java_sport?serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: 127.0.0.1
+    database: 0
+    port: 6379
+    password: 123456
 
 mybatis:
   mapper-locations: mapper/*.xml
-  type-aliases-package: com.google.personalhealthrecordingplateform.model
+  type-aliases-package: com.google.personalhealthrecordingplateform.entity
 
 jwt:
   tokenHeader: Authorization
@@ -20,8 +25,3 @@ jwt:
   secret: bingbingbing
   expiration: 1800000
 
-redis:
-    host: 127.0.0.1
-    database: 0
-    port: 6379
-    password: 123456

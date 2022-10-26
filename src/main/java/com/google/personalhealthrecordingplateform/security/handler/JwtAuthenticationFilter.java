@@ -1,6 +1,6 @@
-package com.google.personalhealthrecordingplateform.configs.security.handler;
+package com.google.personalhealthrecordingplateform.security.handler;
 
-import com.google.personalhealthrecordingplateform.utils.TokenUtil;
+import com.google.personalhealthrecordingplateform.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String tokenHeader;
 
     @Autowired
-    private TokenUtil tokenUtil;
+    private TokenUtils tokenUtils;
 
     @Autowired
     @Qualifier("userDetailsServiceImp")
@@ -50,10 +50,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //要么创建SecurityContext，要么拿之前被存储到个地方的SecurityContext
         if (header != null && header.startsWith(tokenHead)) {
             String token = header.substring(tokenHead.length());
-            String username = tokenUtil.getUsernameByToken(token);
+            String username = tokenUtils.getUsernameByToken(token);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if (!tokenUtil.isExpired(token)) {
+                if (!tokenUtils.isExpired(token)) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     //UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null);

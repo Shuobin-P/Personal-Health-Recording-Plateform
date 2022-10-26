@@ -1,7 +1,7 @@
-package com.google.personalhealthrecordingplateform.controllers;
+package com.google.personalhealthrecordingplateform.controller;
 
 
-import com.google.personalhealthrecordingplateform.utils.Result;
+import com.google.personalhealthrecordingplateform.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
