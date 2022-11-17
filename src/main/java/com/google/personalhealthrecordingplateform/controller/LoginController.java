@@ -1,8 +1,8 @@
-package com.google.personalhealthrecordingplateform.controllers;
+package com.google.personalhealthrecordingplateform.controller;
 
-import com.google.personalhealthrecordingplateform.services.SysUserService;
-import com.google.personalhealthrecordingplateform.utils.Result;
-import com.google.personalhealthrecordingplateform.utils.SecurityUtil;
+import com.google.personalhealthrecordingplateform.service.SysUserService;
+import com.google.personalhealthrecordingplateform.util.Result;
+import com.google.personalhealthrecordingplateform.util.SecurityUtils;
 import com.google.personalhealthrecordingplateform.vo.LoginVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,14 +11,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author W&F
+ */
 @Slf4j
 @RestController
 @RequestMapping("/user")
-@Api(value = "用户使用接口")
+@Api(tags = "用户使用接口")
 public class LoginController {
 
+    private final SysUserService sysUserService;
+
     @Autowired
-    private SysUserService sysUserService;
+    public LoginController(SysUserService sysUserService) {
+        this.sysUserService = sysUserService;
+    }
 
     @ApiOperation(value = "用户登录接口")
     @PostMapping("/login")
@@ -37,8 +44,8 @@ public class LoginController {
     }
 
     @ApiOperation(value = "获取用户信息")
-    @GetMapping("/getLoginInfo")
+    @GetMapping("/getInfo")
     public Result getUserInfo() {
-        return Result.success("查询用户信息", SecurityUtil.getUserInfo());
+        return Result.success("查询用户信息", SecurityUtils.getUserInfo());
     }
 }

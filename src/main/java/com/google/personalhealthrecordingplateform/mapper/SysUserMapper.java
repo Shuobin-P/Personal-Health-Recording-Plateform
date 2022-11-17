@@ -1,9 +1,9 @@
 package com.google.personalhealthrecordingplateform.mapper;
 
-import com.google.personalhealthrecordingplateform.model.SysMenu;
-import com.google.personalhealthrecordingplateform.model.SysPermission;
-import com.google.personalhealthrecordingplateform.model.SysRole;
-import com.google.personalhealthrecordingplateform.model.SysUser;
+import com.google.personalhealthrecordingplateform.entity.SysMenu;
+import com.google.personalhealthrecordingplateform.entity.SysPermission;
+import com.google.personalhealthrecordingplateform.entity.SysRole;
+import com.google.personalhealthrecordingplateform.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

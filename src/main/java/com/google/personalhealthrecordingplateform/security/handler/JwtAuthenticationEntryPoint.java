@@ -1,9 +1,8 @@
-package com.google.personalhealthrecordingplateform.configs.security.handler;
+package com.google.personalhealthrecordingplateform.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.personalhealthrecordingplateform.utils.Result;
+import com.google.personalhealthrecordingplateform.util.Result;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
