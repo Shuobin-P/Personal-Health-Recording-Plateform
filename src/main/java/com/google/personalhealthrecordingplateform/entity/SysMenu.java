@@ -6,6 +6,9 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * @author 31204
+ */
 @Data
 /**
  * 不同的role有不同的菜单

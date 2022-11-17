@@ -1,5 +1,6 @@
 package com.google.personalhealthrecordingplateform;
 
+import com.google.personalhealthrecordingplateform.util.RedisUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,11 +12,12 @@ public class RedisTest {
     @Autowired
     RedisTemplate<String, String> redisTemplate;
 
+    @Autowired
+    RedisUtils redisUtils;
+
     @Test
     public void test() {
-        System.out.println(redisTemplate == null);
-        System.out.println(redisTemplate.opsForValue() == null);
-        redisTemplate.opsForValue().set("sex", "male");
-        System.out.println(redisTemplate.opsForValue().get("sex"));
+        redisUtils.delete("java_sport:sys_user:admin");
     }
+
 }

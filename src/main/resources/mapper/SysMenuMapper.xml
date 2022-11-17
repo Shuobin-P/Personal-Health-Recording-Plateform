@@ -46,7 +46,7 @@
         <result column="title" property="title"/>
         <result column="component" property="component"/>
         <result column="status" property="status"/>
-        <collection property="children" select="findChildren" column="id"  ofType="SysMenu"></collection>
+        <collection property="children" select="findChildren" column="id" ofType="SysMenu"></collection>
     </resultMap>
 
     <select parameterType="Long" resultType="SysMenu" id="findChildren">
@@ -55,4 +55,14 @@
         WHERE parent_id = #{id}
     </select>
 
+    <select id="findMenuByRoleID" resultMap="menuMap" parameterType="Long">
+        SELECT *
+        FROM sys_menu
+        WHERE id IN (
+            SELECT menu_id
+            FROM role_menu
+            WHERE role_id = #{id}
+        )
+          AND parent_id IS NULL
+    </select>
 </mapper>

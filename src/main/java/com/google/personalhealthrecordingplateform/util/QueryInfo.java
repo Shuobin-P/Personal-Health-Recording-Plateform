@@ -2,6 +2,9 @@ package com.google.personalhealthrecordingplateform.util;
 
 import lombok.Data;
 
+/**
+ * @author W&F
+ */
 @Data
 public class QueryInfo {
     /**

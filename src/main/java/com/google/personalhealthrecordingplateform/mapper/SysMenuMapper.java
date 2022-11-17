@@ -17,4 +17,6 @@ public interface SysMenuMapper {
     List<SysMenu> findParents();
 
     Page<SysMenu> findPage(String queryInfo);
+
+    List<SysMenu> findMenuByRoleID(Long id);
 }

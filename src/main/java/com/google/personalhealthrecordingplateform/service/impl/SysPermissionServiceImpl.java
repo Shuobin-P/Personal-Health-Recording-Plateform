@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @author W&F
+ * @version 1.0
+ */
 @Slf4j
 @Service
 public class SysPermissionServiceImpl implements SysPermissionService {
@@ -51,5 +55,10 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         log.info("查询的总条数-->{}", total);
         log.info("分页列表-->{}", result);
         return new PageResult(total, result);
+    }
+
+    @Override
+    public List<SysPermission> findAll() {
+        return sysPermissionMapper.findAll();
     }
 }
