@@ -1,9 +1,12 @@
-package com.google.personalhealthrecordingplateform.model;
+package com.google.personalhealthrecordingplateform.entity;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * @author 31204
+ */
 @Data
 public class SysPermission implements Serializable {
     private Long id;
@@ -11,4 +14,6 @@ public class SysPermission implements Serializable {
     private String label;
 
     private String code;
+
+    private boolean status;
 }

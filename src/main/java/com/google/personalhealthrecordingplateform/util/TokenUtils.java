@@ -1,4 +1,4 @@
-package com.google.personalhealthrecordingplateform.utils;
+package com.google.personalhealthrecordingplateform.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class TokenUtil {
+public class TokenUtils {
     @Value("${jwt.secret}")
     private String secret;
 

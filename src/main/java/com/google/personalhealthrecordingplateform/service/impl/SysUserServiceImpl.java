@@ -1,10 +1,10 @@
-package com.google.personalhealthrecordingplateform.services.impl;
+package com.google.personalhealthrecordingplateform.service.impl;
 
 import com.google.personalhealthrecordingplateform.mapper.SysUserMapper;
-import com.google.personalhealthrecordingplateform.services.SysUserService;
-import com.google.personalhealthrecordingplateform.utils.MD5Utils;
-import com.google.personalhealthrecordingplateform.utils.Result;
-import com.google.personalhealthrecordingplateform.utils.TokenUtil;
+import com.google.personalhealthrecordingplateform.service.SysUserService;
+import com.google.personalhealthrecordingplateform.util.MD5Utils;
+import com.google.personalhealthrecordingplateform.util.Result;
+import com.google.personalhealthrecordingplateform.util.TokenUtils;
 import com.google.personalhealthrecordingplateform.vo.LoginVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,30 +22,30 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author W&F
+ */
 @Service
 @Slf4j
 public class SysUserServiceImpl implements SysUserService {
-    @Autowired
-    private SysUserMapper sysUserMapper;
+    private final TokenUtils tokenUtils;
+    private final PasswordEncoder passwordEncoder;
+    private final SysUserMapper sysUserMapper;
 
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
 
     @Autowired
     @Qualifier("userDetailsServiceImp")
     private UserDetailsService userDetailsService;
 
     @Autowired
-    private TokenUtil tokenUtil;
-
-    @Value("${jwt.tokenHead}")
-    private String tokenHead;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public SysUserServiceImpl(SysUserMapper sysUserMapper) {
+    public SysUserServiceImpl(SysUserMapper sysUserMapper, TokenUtils tokenUtils, PasswordEncoder passwordEncoder) {
         this.sysUserMapper = sysUserMapper;
+        this.tokenUtils = tokenUtils;
+        this.passwordEncoder = passwordEncoder;
     }
+
 
     @Override
     public Result findAll() {
@@ -63,9 +63,12 @@ public class SysUserServiceImpl implements SysUserService {
     public Result login(LoginVo loginVo) {
         log.info("开始登录");
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginVo.getUsername());
-        if (userDetails == null || !passwordEncoder.matches(MD5Utils.md5(loginVo.getPassword()),userDetails.getPassword()))
+        if (userDetails == null || !passwordEncoder.matches(MD5Utils.md5(loginVo.getPassword()), userDetails.getPassword())) {
             return Result.fail("账号或者密码错误，请重新输入");
-        if (!userDetails.isEnabled()) return Result.fail("该账户已被禁用");
+        }
+        if (!userDetails.isEnabled()) {
+            return Result.fail("该账户已被禁用");
+        }
         Authentication usernamePasswordAuthenticationToken
                 = new UsernamePasswordAuthenticationToken(userDetails.getUsername(),
                 userDetails.getPassword(),
@@ -76,7 +79,7 @@ public class SysUserServiceImpl implements SysUserService {
         //此时我们在A线程的SecurityContext中加入Authentication，但是B线程的SecurityContext.getAuthentication中确是为空。
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
         log.info("根据登录信息表获取token");
-        String token = tokenUtil.generateToken(userDetails);
+        String token = tokenUtils.generateToken(userDetails);
         Map<String, String> map = new HashMap<>(2);
         map.put("tokenHead", tokenHead);
         map.put("token", token);

@@ -27,6 +27,7 @@
         <!--        <collection property="menus" select="findMenus" column="id" ofType="SysMenu"/>-->
         <!--        <collection property="permissions" select="findPermission" column="id"-->
         <!--                    ofType="SysPermission"/>-->
+        <result column="status" property="status"/>
     </resultMap>
 
     <resultMap id="menuMap" type="SysMenu">
@@ -35,12 +36,16 @@
         <result column="icon" property="icon"/>
         <result column="title" property="title"/>
         <result column="component" property="component"/>
+        <result column="status" property="status"/>
+
     </resultMap>
 
     <resultMap id="permissionMap" type="SysPermission">
         <id column="id" property="id"/>
         <result column="label" property="label"/>
         <result column="code" property="code"/>
+        <result column="status" property="status"/>
+
     </resultMap>
 
     <select id="findAll" resultType="SysUser">
@@ -56,24 +61,26 @@
     </select>
 
     <select id="findRoles" parameterType="int" resultMap="roleMap">
-        select *
-        from sys_role
+        SELECT *
+        FROM sys_role
+        WHERE status = 1
         <if test="userID != null">
-            where id in (select role_id from user_roles where user_id = #{userID})
+            AND id in (select role_id from user_role where user_id = #{userID})
         </if>
     </select>
 
     <select id="findPermissions" parameterType="int" resultMap="permissionMap">
         SELECT *
         FROM sys_permission
+        WHERE status = 1
         <if test="userID != null">
-            WHERE id IN (
+            AND id IN (
             SELECT permission_id
-            FROM roles_permissions
+            FROM role_permission
             WHERE role_id
             IN (
             SELECT role_id
-            FROM user_roles
+            FROM user_role
             WHERE user_id = #{userID}
             )
             )
@@ -85,10 +92,10 @@
     <select id="findMenus" parameterType="int" resultMap="menuMap">
         SELECT *
         FROM sys_menu
-        WHERE parent_id IS NULL
+        WHERE parent_id IS NULL AND status = 1
           <if test="userID != null">
               AND id IN (
-              SELECT menu_id FROM roles_menus WHERE role_id IN (SELECT role_id FROM user_roles WHERE user_id = #{userID}));
+              SELECT menu_id FROM role_menu WHERE role_id IN (SELECT role_id FROM user_role WHERE user_id = #{userID}));
           </if>
 
 
@@ -98,14 +105,14 @@
     <select id="findChildrenMenus" parameterType="int" resultType="SysMenu">
         select *
         from sys_menu
-        where parent_id = #{parentID}
+        where parent_id = #{parentID} AND status = 1
         <if test="userID != null">
             AND id IN (
             SELECT menu_id
-            FROM roles_menus
+            FROM role_menu
             WHERE role_id IN (
                 SELECT role_id
-                FROM user_roles
+                FROM user_role
                 WHERE user_id = #{userID}));
         </if>
 

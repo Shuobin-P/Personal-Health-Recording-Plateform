@@ -1,4 +1,4 @@
-package com.google.personalhealthrecordingplateform.configs.security.content;
+package com.google.personalhealthrecordingplateform.security.content;
 
 public class SecurityContent {
     public static String[] WHITE_LIST = {
@@ -9,6 +9,6 @@ public class SecurityContent {
             "swagger-resources/**",
             "v2/**",
             "configuration/ui",
-            "configuration/security"
+            "configuration/security",
     };
 }
