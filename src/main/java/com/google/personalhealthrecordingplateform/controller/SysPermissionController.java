@@ -9,6 +9,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author W&F
+ * @version 1.0
+ */
+
 @RestController
 @RequestMapping("/permission")
 @Api(tags = "权限数据接口")
@@ -42,11 +47,22 @@ public class SysPermissionController {
         return Result.success("成功修改权限信息");
     }
 
-    //输入一个字符串，即根据该字符串进行模糊查询，返回所有符合条件的记录
+
+    /**
+     * 输入一个字符串，即根据该字符串进行模糊查询，返回所有符合条件的记录
+     *
+     * @param queryInfo
+     * @return
+     */
     @PostMapping("/findPage")
     @ApiOperation(value = "模糊查询权限接口")
     public Result findPage(@RequestBody QueryInfo queryInfo) {
         return sysPermissionService.findPage(queryInfo);
     }
 
+    @ApiOperation(value = "查询所有的权限接口")
+    @GetMapping("/findAll")
+    public Result findAll() {
+        return Result.success("成功查询到所有权限信息", sysPermissionService.findAll());
+    }
 }

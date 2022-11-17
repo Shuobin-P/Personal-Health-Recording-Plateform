@@ -59,7 +59,6 @@ public class RedisUtils {
      * @param val
      */
     public void add(String key, Object val) {
-        //FIXME 序列化以后丢失字段，Redis丢失字段
         redisTemplate.opsForValue().set(key, val);
     }
 
@@ -70,7 +69,6 @@ public class RedisUtils {
      */
     public void delete(String key) {
         redisTemplate.delete(key);
-
     }
 
 
