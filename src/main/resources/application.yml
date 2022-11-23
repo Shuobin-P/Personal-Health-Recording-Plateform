@@ -25,3 +25,8 @@ jwt:
   secret: bingbingbing
   expiration: 1800000
 
+qiniu:
+  accessKey: VjqyGJIWeKMORqLsJR-3CMSBiKTxYF25wC5CSPbc # 公钥
+  secretKey: adec1oMqUWZAUKPruXLwus2822HK9wMJwpTllO8J # 私钥
+  bucketName: healthy-plateform-images  #存储空间名称
+  path: rlp9l16g7.hn-bkt.clouddn.com

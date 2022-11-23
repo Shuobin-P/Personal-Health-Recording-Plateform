@@ -48,6 +48,67 @@
 
     </resultMap>
 
+    <insert id="insert" parameterType="SysUser" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_user (user_name, `password`, nick_name, sex, avatar, address, open_id, status, `admin`,
+                              phone_number, email)
+        VALUES (#{userName}, #{password}, #{nickName}, #{sex}, #{avatar}, #{address},
+                #{openID}, #{status}, #{admin}, #{phoneNumber}, #{email})
+    </insert>
+
+    <insert id="insertRole" parameterType="Long">
+        INSERT INTO user_role (user_id, role_id)
+        VALUES (#{userID}, #{roleID})
+    </insert>
+
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM sys_user
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteRole" parameterType="Long">
+        DELETE
+        FROM user_role
+        WHERE user_id = #{userID}
+    </delete>
+
+    <update id="update" parameterType="SysUser">
+        UPDATE sys_user
+        <set>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="nickName != null">
+                nick_name = #{nickName},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="openID != null">
+                open_id = #{openID},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="admin != null">
+                admin = #{admin},
+            </if>
+            <if test="phoneNumber != null">
+                phone_number = #{phoneNumber},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
     <select id="findAll" resultType="SysUser">
         select *
         from sys_user;
@@ -93,11 +154,10 @@
         SELECT *
         FROM sys_menu
         WHERE parent_id IS NULL AND status = 1
-          <if test="userID != null">
-              AND id IN (
-              SELECT menu_id FROM role_menu WHERE role_id IN (SELECT role_id FROM user_role WHERE user_id = #{userID}));
-          </if>
-
+        <if test="userID != null">
+            AND id IN (
+            SELECT menu_id FROM role_menu WHERE role_id IN (SELECT role_id FROM user_role WHERE user_id = #{userID}));
+        </if>
 
 
     </select>
@@ -111,10 +171,19 @@
             SELECT menu_id
             FROM role_menu
             WHERE role_id IN (
-                SELECT role_id
-                FROM user_role
-                WHERE user_id = #{userID}));
+            SELECT role_id
+            FROM user_role
+            WHERE user_id = #{userID}));
         </if>
 
+    </select>
+
+    <select id="findPage" resultMap="mainMap">
+        SELECT * FROM sys_user
+        <if test="queryString != null and queryString.length > 0">
+            where user_name like concat('%', #{queryString}, '%')
+            or nick_name like concat('%', #{queryString}, '%')
+            or phone_number like concat('%', #{queryString}, '%')
+        </if>
     </select>
 </mapper>

@@ -26,7 +26,7 @@ public class SwaggerConfig {
                 .useDefaultResponseMessages(false)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.google.personalhealthrecordingplateform.controllers"))
+                .apis(RequestHandlerSelectors.basePackage("com.google.personalhealthrecordingplateform.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 //默认swagger授权有权限测试接口

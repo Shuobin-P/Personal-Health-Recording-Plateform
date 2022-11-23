@@ -1,8 +1,11 @@
 package com.google.personalhealthrecordingplateform.service.impl;
 
+import com.google.personalhealthrecordingplateform.entity.SysRole;
+import com.google.personalhealthrecordingplateform.entity.SysUser;
 import com.google.personalhealthrecordingplateform.mapper.SysUserMapper;
 import com.google.personalhealthrecordingplateform.service.SysUserService;
 import com.google.personalhealthrecordingplateform.util.MD5Utils;
+import com.google.personalhealthrecordingplateform.util.QueryInfo;
 import com.google.personalhealthrecordingplateform.util.Result;
 import com.google.personalhealthrecordingplateform.util.TokenUtils;
 import com.google.personalhealthrecordingplateform.vo.LoginVo;
@@ -18,8 +21,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,10 +53,59 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
 
+    @Transactional(rollbackFor = Throwable.class)
+    @Override
+    public Result insert(SysUser sysUser) {
+        SysUser su = sysUserMapper.findUserByUserName(sysUser.getUsername());
+        if (null != su) {
+            return Result.fail("用户名已经存在！");
+        }
+        sysUser.setPassword(passwordEncoder.encode(MD5Utils.md5(sysUser.getPassword())));
+        sysUserMapper.insert(sysUser);
+        Iterator<SysRole> iterator = sysUser.getRoles().iterator();
+        while (iterator.hasNext()) {
+            sysUserMapper.insertRole(sysUser.getId(), iterator.next().getId());
+        }
+        return Result.success("成功插入用户信息");
+    }
+
+    @Transactional(rollbackFor = Throwable.class)
+    @Override
+    public void delete(Long userID) {
+        sysUserMapper.delete(userID);
+        sysUserMapper.deleteRole(userID);
+    }
+
+    @Transactional(rollbackFor = Throwable.class)
+    @Override
+    public Result update(SysUser sysUser) {
+        sysUserMapper.deleteRole(sysUser.getId());
+        Iterator<SysRole> iterator = sysUser.getRoles().iterator();
+        while (iterator.hasNext()) {
+            sysUserMapper.insertRole(sysUser.getId(), iterator.next().getId());
+        }
+        if (sysUser.getPassword() != null) {
+            sysUser.setPassword(passwordEncoder.encode(MD5Utils.md5(sysUser.getPassword())));
+        }
+        sysUserMapper.update(sysUser);
+        return Result.success("用户信息修改成功！");
+    }
+
     @Override
     public Result findAll() {
         log.info("获取所有用户信息");
         return Result.success("查询成功", sysUserMapper.findAll());
+    }
+
+    @Override
+    public List<SysUser> findPage(QueryInfo queryInfo) {
+        List<SysUser> list = sysUserMapper.findPage(queryInfo);
+        list.forEach(item -> {
+            item.setName(item.getUsername());
+            item.setRoles(sysUserMapper.findRoles(item.getId()));
+            item.setPassword(null);
+        });
+        return list;
     }
 
     @Override
