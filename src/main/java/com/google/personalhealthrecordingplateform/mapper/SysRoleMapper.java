@@ -81,5 +81,12 @@ public interface SysRoleMapper {
      */
     SysRole findRoleByLabel(String label);
 
+    /**
+     * 查询所有角色信息
+     *
+     * @return 所有角色信息
+     */
+    List<SysRole> findAll();
+
 
 }

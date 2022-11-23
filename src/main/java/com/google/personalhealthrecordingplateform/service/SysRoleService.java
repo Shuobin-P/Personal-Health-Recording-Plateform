@@ -41,4 +41,11 @@ public interface SysRoleService {
      * @return 分页查询结果
      */
     List<SysRole> findPage(QueryInfo queryInfo);
+
+    /**
+     * 查询所有角色信息
+     *
+     * @return 所有角色信息
+     */
+    List<SysRole> findAll();
 }

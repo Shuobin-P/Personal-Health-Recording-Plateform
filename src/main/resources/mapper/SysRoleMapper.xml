@@ -51,9 +51,16 @@
         </if>
     </select>
 
+    <select id="findAll" resultType="SysRole">
+        SELECT *
+        FROM sys_role
+    </select>
+    
     <select id="findRoleByLabel" parameterType="String" resultType="SysRole">
         SELECT *
         FROM sys_role
         WHERE label = #{label}
     </select>
+
+
 </mapper>

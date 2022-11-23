@@ -1,8 +1,13 @@
 package com.google.personalhealthrecordingplateform.service;
 
+import com.google.personalhealthrecordingplateform.entity.SysRole;
+import com.google.personalhealthrecordingplateform.entity.SysUser;
+import com.google.personalhealthrecordingplateform.util.QueryInfo;
 import com.google.personalhealthrecordingplateform.util.Result;
 import com.google.personalhealthrecordingplateform.vo.LoginVo;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
+import java.util.List;
 
 /**
  * 这个接口有必要继承UserDetailsService吗？
@@ -12,11 +17,43 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public interface SysUserService extends UserDetailsService {
 
     /**
+     * 插入用户数据
+     *
+     * @param sysUser 用户
+     * @return 插入用户信息结果
+     */
+    Result insert(SysUser sysUser);
+
+    /**
+     * 删除用户
+     *
+     * @param userID 用户ID
+     */
+    void delete(Long userID);
+
+    /**
+     * 修改用户信息
+     *
+     * @param sysUser 用户信息
+     * @return 修改结果
+     */
+    Result update(SysUser sysUser);
+
+
+    /**
      * 获取所有用户的信息
      *
      * @return 所有的用户信息
      */
     Result findAll();
+
+    /**
+     * 分页查询用户信息
+     *
+     * @param queryInfo 模糊查询信息
+     * @return 满足条件的用户信息
+     */
+    List<SysUser> findPage(QueryInfo queryInfo);
 
     /**
      * 通过用户ID查询用户信息
