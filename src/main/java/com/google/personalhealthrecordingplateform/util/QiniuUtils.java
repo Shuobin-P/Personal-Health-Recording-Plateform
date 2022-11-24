@@ -2,6 +2,7 @@ package com.google.personalhealthrecordingplateform.util;
 
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
+import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
 import lombok.extern.slf4j.Slf4j;
@@ -24,19 +25,18 @@ public class QiniuUtils {
      * 参考文献：https://blog.csdn.net/qq_25046827/article/details/123640737
      */
     private Auth auth;
-
     private UploadManager uploadManager;
+    private BucketManager bucketManager;
 
     @Value("${qiniu.bucketName}")
     private String bucketName;
 
-    @Value("${qiniu.path}")
-    private String url;
 
     @Autowired
-    public QiniuUtils(UploadManager uploadManager, Auth auth) {
+    public QiniuUtils(UploadManager uploadManager, Auth auth, BucketManager bucketManager) {
         this.uploadManager = uploadManager;
         this.auth = auth;
+        this.bucketManager = bucketManager;
     }
 
     /**
@@ -50,9 +50,18 @@ public class QiniuUtils {
         if (!res.isOK()) {
             throw new RuntimeException("上传七牛云出错:" + res);
         }
-//        return url + "/" + fileName;
         return fileName;
 
+    }
+
+    /**
+     * 删除七牛云头像文件
+     *
+     * @param fileName 头像文件名
+     * @throws QiniuException 七牛云异常
+     */
+    public void delete(String fileName) throws QiniuException {
+        bucketManager.delete(bucketName, fileName);
     }
 
 }

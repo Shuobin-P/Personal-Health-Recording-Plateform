@@ -80,4 +80,12 @@ public interface SysUserMapper {
      */
     List<SysUser> findPage(QueryInfo queryInfo);
 
+    /**
+     * 得到用户的头像文件名
+     *
+     * @param id 用户ID
+     * @return 头像文件名
+     */
+    String findAvatar(Long id);
+
 }

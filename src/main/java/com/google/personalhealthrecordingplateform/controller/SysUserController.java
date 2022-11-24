@@ -3,8 +3,10 @@ package com.google.personalhealthrecordingplateform.controller;
 import com.google.personalhealthrecordingplateform.entity.SysUser;
 import com.google.personalhealthrecordingplateform.service.SysUserService;
 import com.google.personalhealthrecordingplateform.util.PageResult;
+import com.google.personalhealthrecordingplateform.util.QiniuUtils;
 import com.google.personalhealthrecordingplateform.util.QueryInfo;
 import com.google.personalhealthrecordingplateform.util.Result;
+import com.qiniu.common.QiniuException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +27,12 @@ import java.util.List;
 @RequestMapping("/user")
 public class SysUserController {
 
+    private final QiniuUtils qiniuUtils;
     private final SysUserService sysUserService;
 
     @Autowired
-    public SysUserController(SysUserService sysUserService) {
+    public SysUserController(QiniuUtils qiniuUtils, SysUserService sysUserService) {
+        this.qiniuUtils = qiniuUtils;
         this.sysUserService = sysUserService;
     }
 
@@ -40,7 +44,8 @@ public class SysUserController {
 
     @ApiOperation(value = "删除用户接口")
     @DeleteMapping("/delete/{id}")
-    public Result delete(@PathVariable Long id) {
+    public Result delete(@PathVariable Long id) throws QiniuException {
+        qiniuUtils.delete(sysUserService.findAvatar(id));
         sysUserService.delete(id);
         return Result.success("删除成功");
     }
