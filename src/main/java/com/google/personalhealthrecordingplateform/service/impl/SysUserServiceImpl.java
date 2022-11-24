@@ -109,6 +109,11 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
+    public String findAvatar(Long id) {
+        return sysUserMapper.findAvatar(id);
+    }
+
+    @Override
     public Result selectByID(Integer id) {
         return Result.success("找到一条数据", sysUserMapper.selectByID(3));
     }

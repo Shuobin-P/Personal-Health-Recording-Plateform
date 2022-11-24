@@ -1,5 +1,6 @@
 package com.google.personalhealthrecordingplateform.config;
 
+import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
@@ -28,10 +29,18 @@ public class QiniuConfig {
     }
 
     @Bean
-    public UploadManager getUploadManager() {
-        Configuration cfg = new Configuration(Region.region2());
+    public Configuration getConfiguration() {
+        return new Configuration(Region.region2());
+    }
+
+    @Bean
+    public UploadManager getUploadManager(Configuration cfg) {
         cfg.resumableUploadAPIVersion = Configuration.ResumableUploadAPIVersion.V2;
         return new UploadManager(cfg);
     }
 
+    @Bean
+    public BucketManager getBucketManager(Auth auth, Configuration cfg) {
+        return new BucketManager(auth, cfg);
+    }
 }

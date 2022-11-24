@@ -37,7 +37,7 @@ public class GlobalException {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = QiniuException.class)
     public Result exception(QiniuException e) {
-        log.error("七牛云上传失败-->{}", e.getMessage());
+        log.error("七牛云操作异常-->{}", e.getMessage());
         return Result.fail(e.getMessage());
     }
 

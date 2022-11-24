@@ -186,4 +186,8 @@
             or phone_number like concat('%', #{queryString}, '%')
         </if>
     </select>
+
+    <select id="findAvatar" parameterType="Long" resultType="String">
+        SELECT avatar FROM sys_user WHERE id = #{id}
+    </select>
 </mapper>
