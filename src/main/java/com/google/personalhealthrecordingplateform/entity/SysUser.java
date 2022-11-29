@@ -18,7 +18,6 @@ public class SysUser implements UserDetails {
     private Long id;
     @ApiModelProperty(value = "用户名")
     private String userName;
-
     @ApiModelProperty(value = "返回给前端的用户名")
     private String name;
     @ApiModelProperty(value = "密码")
@@ -36,9 +35,9 @@ public class SysUser implements UserDetails {
     @ApiModelProperty(value = "邮箱")
     private String email;
     @ApiModelProperty(value = "是否为管理员")
-    private Byte admin;
+    private Boolean admin;
     @ApiModelProperty(value = "用户状态")
-    private Byte status;
+    private Boolean status;
     @ApiModelProperty(value = "电话号码")
     private String phoneNumber;
     @ApiModelProperty(value = "角色列表")
@@ -82,18 +81,13 @@ public class SysUser implements UserDetails {
     }
 
     @Override
-
     public boolean isCredentialsNonExpired() {
         return false;
     }
 
     @Override
     public boolean isEnabled() {
-        return status == 0 ? false : true;
+        return status;
     }
 
-
-    public boolean isAdmin() {
-        return this.admin == 1 ? true : false;
-    }
 }

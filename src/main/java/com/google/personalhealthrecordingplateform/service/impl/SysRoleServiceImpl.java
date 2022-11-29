@@ -121,4 +121,14 @@ public class SysRoleServiceImpl implements SysRoleService {
         });
         return list;
     }
+
+    @Override
+    public List<SysRole> findAll() {
+        List<SysRole> list = sysRoleMapper.findAll();
+        list.forEach(item -> {
+            item.setMenus(this.sysMenuMapper.findMenuByRoleID(item.getId()));
+            item.setPermissions(this.sysPermissionMapper.findPermissionByRoleID(item.getId()));
+        });
+        return list;
+    }
 }

@@ -62,4 +62,11 @@ public class SysRoleController {
         List<SysRole> list = sysRoleService.findPage(queryInfo);
         return PageResult.pageResult(list.size(), list);
     }
+
+    @ApiOperation(value = "查询所有角色接口")
+    @GetMapping("/findAll")
+    public Result findAll() {
+        List<SysRole> list = sysRoleService.findAll();
+        return Result.success("所有角色信息", list);
+    }
 }
