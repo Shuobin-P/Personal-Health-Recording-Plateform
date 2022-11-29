@@ -1,5 +1,6 @@
 package com.google.personalhealthrecordingplateform;
 
+import com.google.personalhealthrecordingplateform.util.MD5Utils;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,8 +11,9 @@ public class PasswordEncoderTest {
     @Test
     public void test() {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        System.out.println(passwordEncoder.encode("123456"));
-        System.out.println(passwordEncoder.matches("e10adc3949ba59abbe56e057f20f883e", "$2a$10$H4TnTlyPD6R/hvMj0sEzseqguWzt.GzI/TtJPLgXPdEDQRbUfPDde"));
+        String t = passwordEncoder.encode(MD5Utils.md5("fNB5ZklKVa"));
+        System.out.println(t); //数据库中的密码
+        System.out.println(passwordEncoder.matches(MD5Utils.md5("fNB5ZklKVa"), t));
     }
 
 }

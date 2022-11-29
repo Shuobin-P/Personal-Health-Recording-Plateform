@@ -3,7 +3,7 @@ package com.google.personalhealthrecordingplateform.controller;
 import com.google.personalhealthrecordingplateform.service.SysUserService;
 import com.google.personalhealthrecordingplateform.util.Result;
 import com.google.personalhealthrecordingplateform.util.SecurityUtils;
-import com.google.personalhealthrecordingplateform.vo.LoginVo;
+import com.google.personalhealthrecordingplateform.vo.LoginVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class LoginController {
 
     @ApiOperation(value = "用户登录接口")
     @PostMapping("/login")
-    public Result login(@RequestBody LoginVo loginVo) {
+    public Result login(@RequestBody LoginVO loginVo) {
         log.info("进入登录接口");
         return sysUserService.login(loginVo);
     }

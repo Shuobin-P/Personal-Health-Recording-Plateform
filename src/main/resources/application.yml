@@ -14,6 +14,27 @@ spring:
     database: 0
     port: 6379
     password: 123456
+  mail:
+    host: smtp.163.com
+    port: 465
+    protocol: smtp
+    username: shuobinpeng@163.com
+    password: YZJYGFWZQRGVQCHD
+    properties:
+      mail:
+        smtp:
+          auth: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
 
 mybatis:
   mapper-locations: mapper/*.xml
@@ -26,7 +47,9 @@ jwt:
   expiration: 1800000
 
 qiniu:
-  accessKey: VjqyGJIWeKMORqLsJR-3CMSBiKTxYF25wC5CSPbc # 公钥
-  secretKey: adec1oMqUWZAUKPruXLwus2822HK9wMJwpTllO8J # 私钥
-  bucketName: healthy-plateform-images  #存储空间名称
+  accessKey: VjqyGJIWeKMORqLsJR-3CMSBiKTxYF25wC5CSPbc
+  secretKey: adec1oMqUWZAUKPruXLwus2822HK9wMJwpTllO8J
+  bucketName: healthy-plateform-images
   path: rlp9l16g7.hn-bkt.clouddn.com
+
+

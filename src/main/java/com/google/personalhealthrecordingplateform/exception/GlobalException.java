@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.mail.MessagingException;
+
 /**
  * 后端报错了，前端tm的也要显示？
  * 登录接口测试+全局异常处理
@@ -38,6 +40,13 @@ public class GlobalException {
     @ExceptionHandler(value = QiniuException.class)
     public Result exception(QiniuException e) {
         log.error("七牛云操作异常-->{}", e.getMessage());
+        return Result.fail(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = MessagingException.class)
+    public Result exception(MessagingException e) {
+        log.error("邮件发送异常-->{}", e.getMessage());
         return Result.fail(e.getMessage());
     }
 

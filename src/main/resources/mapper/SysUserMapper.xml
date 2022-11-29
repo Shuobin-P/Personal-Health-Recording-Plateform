@@ -188,6 +188,14 @@
     </select>
 
     <select id="findAvatar" parameterType="Long" resultType="String">
-        SELECT avatar FROM sys_user WHERE id = #{id}
+        SELECT avatar
+        FROM sys_user
+        WHERE id = #{id}
+    </select>
+
+    <select id="findUserByEmail" parameterType="String" resultType="SysUser">
+        SELECT *
+        FROM sys_user
+        WHERE email = #{email}
     </select>
 </mapper>

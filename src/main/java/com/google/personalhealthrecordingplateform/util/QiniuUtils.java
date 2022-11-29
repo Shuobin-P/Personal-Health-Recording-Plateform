@@ -21,9 +21,6 @@ import java.io.FileInputStream;
 @Component
 public class QiniuUtils {
 
-    /**
-     * 参考文献：https://blog.csdn.net/qq_25046827/article/details/123640737
-     */
     private Auth auth;
     private UploadManager uploadManager;
     private BucketManager bucketManager;
