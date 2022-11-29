@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @ApiModel(value = "登录参数")
-public class LoginVo {
+public class LoginVO {
     @ApiModelProperty(value = "用户名", dataType = "java.lang.String")
     private String username;
 

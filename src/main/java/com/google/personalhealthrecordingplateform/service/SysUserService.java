@@ -1,10 +1,9 @@
 package com.google.personalhealthrecordingplateform.service;
 
-import com.google.personalhealthrecordingplateform.entity.SysRole;
 import com.google.personalhealthrecordingplateform.entity.SysUser;
 import com.google.personalhealthrecordingplateform.util.QueryInfo;
 import com.google.personalhealthrecordingplateform.util.Result;
-import com.google.personalhealthrecordingplateform.vo.LoginVo;
+import com.google.personalhealthrecordingplateform.vo.LoginVO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
@@ -69,7 +68,7 @@ public interface SysUserService extends UserDetailsService {
      * @param loginVo 用户提交的登录信息
      * @return 用户身份验证结果
      */
-    Result login(LoginVo loginVo);
+    Result login(LoginVO loginVo);
 
     /**
      * 得到用户的头像文件名
@@ -78,5 +77,14 @@ public interface SysUserService extends UserDetailsService {
      * @return 头像文件名
      */
     String findAvatar(Long id);
+
+    /**
+     * 查找数据库中是否包含该邮箱账号对应的用户记录
+     *
+     * @param email 邮箱
+     * @return true OR false
+     */
+    SysUser findUser(String email);
+
 
 }

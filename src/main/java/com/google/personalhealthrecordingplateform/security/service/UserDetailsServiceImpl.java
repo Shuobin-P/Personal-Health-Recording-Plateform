@@ -44,7 +44,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 throw new UsernameNotFoundException("用户名不存在");
             }
             log.info("sysUser UserName: " + sysUser.getUsername());
-            if (sysUser.getAdmin()) {
+            Boolean isAdmin = sysUser.getAdmin();
+            if (isAdmin != null && isAdmin == true) {
                 sysUser.setRoles(sysUserMapper.findRoles(null));
                 sysUser.setPermissions(sysUserMapper.findPermissions(null));
                 List<SysMenu> menus = sysUserMapper.findMenus(null);

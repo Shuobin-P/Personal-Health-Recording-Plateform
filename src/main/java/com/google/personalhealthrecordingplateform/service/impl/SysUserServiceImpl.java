@@ -4,11 +4,8 @@ import com.google.personalhealthrecordingplateform.entity.SysRole;
 import com.google.personalhealthrecordingplateform.entity.SysUser;
 import com.google.personalhealthrecordingplateform.mapper.SysUserMapper;
 import com.google.personalhealthrecordingplateform.service.SysUserService;
-import com.google.personalhealthrecordingplateform.util.MD5Utils;
-import com.google.personalhealthrecordingplateform.util.QueryInfo;
-import com.google.personalhealthrecordingplateform.util.Result;
-import com.google.personalhealthrecordingplateform.util.TokenUtils;
-import com.google.personalhealthrecordingplateform.vo.LoginVo;
+import com.google.personalhealthrecordingplateform.util.*;
+import com.google.personalhealthrecordingplateform.vo.LoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,21 +32,22 @@ import java.util.Map;
 @Slf4j
 public class SysUserServiceImpl implements SysUserService {
     private final TokenUtils tokenUtils;
-    private final PasswordEncoder passwordEncoder;
     private final SysUserMapper sysUserMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService userDetailsService;
+    @Autowired
+    private RedisUtils redisUtils;
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 
-    @Autowired
-    @Qualifier("userDetailsServiceImp")
-    private UserDetailsService userDetailsService;
 
     @Autowired
-    public SysUserServiceImpl(SysUserMapper sysUserMapper, TokenUtils tokenUtils, PasswordEncoder passwordEncoder) {
-        this.sysUserMapper = sysUserMapper;
+    public SysUserServiceImpl(TokenUtils tokenUtils, PasswordEncoder passwordEncoder, SysUserMapper sysUserMapper, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
         this.tokenUtils = tokenUtils;
         this.passwordEncoder = passwordEncoder;
+        this.sysUserMapper = sysUserMapper;
+        this.userDetailsService = userDetailsService;
     }
 
 
@@ -79,10 +77,14 @@ public class SysUserServiceImpl implements SysUserService {
     @Transactional(rollbackFor = Throwable.class)
     @Override
     public Result update(SysUser sysUser) {
+        redisUtils.delete("java_sport:sys_user:" + sysUser.getUsername());
         sysUserMapper.deleteRole(sysUser.getId());
-        Iterator<SysRole> iterator = sysUser.getRoles().iterator();
-        while (iterator.hasNext()) {
-            sysUserMapper.insertRole(sysUser.getId(), iterator.next().getId());
+        List<SysRole> roles = sysUser.getRoles();
+        if (roles != null) {
+            Iterator<SysRole> iterator = roles.iterator();
+            while (iterator.hasNext()) {
+                sysUserMapper.insertRole(sysUser.getId(), iterator.next().getId());
+            }
         }
         if (sysUser.getPassword() != null) {
             sysUser.setPassword(passwordEncoder.encode(MD5Utils.md5(sysUser.getPassword())));
@@ -114,13 +116,18 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
+    public SysUser findUser(String email) {
+        return sysUserMapper.findUserByEmail(email);
+    }
+
+    @Override
     public Result selectByID(Integer id) {
         return Result.success("找到一条数据", sysUserMapper.selectByID(3));
     }
 
 
     @Override
-    public Result login(LoginVo loginVo) {
+    public Result login(LoginVO loginVo) {
         log.info("开始登录");
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginVo.getUsername());
         if (userDetails == null || !passwordEncoder.matches(MD5Utils.md5(loginVo.getPassword()), userDetails.getPassword())) {

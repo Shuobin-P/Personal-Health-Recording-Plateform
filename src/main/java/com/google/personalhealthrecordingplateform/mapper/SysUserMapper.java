@@ -88,4 +88,11 @@ public interface SysUserMapper {
      */
     String findAvatar(Long id);
 
+    /**
+     * 通过邮箱找到对应的用户信息
+     *
+     * @param email 邮件地址
+     * @return 用户信息
+     */
+    SysUser findUserByEmail(String email);
 }
