@@ -10,5 +10,6 @@ public class SecurityContent {
             "v2/**",
             "configuration/ui",
             "configuration/security",
+            "/tool/forget/password",
     };
 }

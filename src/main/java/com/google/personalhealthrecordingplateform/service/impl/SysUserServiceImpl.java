@@ -1,11 +1,11 @@
 package com.google.personalhealthrecordingplateform.service.impl;
 
+import com.google.personalhealthrecordingplateform.entity.SysRole;
+import com.google.personalhealthrecordingplateform.entity.SysUser;
 import com.google.personalhealthrecordingplateform.mapper.SysUserMapper;
 import com.google.personalhealthrecordingplateform.service.SysUserService;
-import com.google.personalhealthrecordingplateform.util.MD5Utils;
-import com.google.personalhealthrecordingplateform.util.Result;
-import com.google.personalhealthrecordingplateform.util.TokenUtils;
-import com.google.personalhealthrecordingplateform.vo.LoginVo;
+import com.google.personalhealthrecordingplateform.util.*;
+import com.google.personalhealthrecordingplateform.vo.LoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,8 +18,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,28 +32,92 @@ import java.util.Map;
 @Slf4j
 public class SysUserServiceImpl implements SysUserService {
     private final TokenUtils tokenUtils;
-    private final PasswordEncoder passwordEncoder;
     private final SysUserMapper sysUserMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService userDetailsService;
+    @Autowired
+    private RedisUtils redisUtils;
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 
-    @Autowired
-    @Qualifier("userDetailsServiceImp")
-    private UserDetailsService userDetailsService;
 
     @Autowired
-    public SysUserServiceImpl(SysUserMapper sysUserMapper, TokenUtils tokenUtils, PasswordEncoder passwordEncoder) {
-        this.sysUserMapper = sysUserMapper;
+    public SysUserServiceImpl(TokenUtils tokenUtils, PasswordEncoder passwordEncoder, SysUserMapper sysUserMapper, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
         this.tokenUtils = tokenUtils;
         this.passwordEncoder = passwordEncoder;
+        this.sysUserMapper = sysUserMapper;
+        this.userDetailsService = userDetailsService;
     }
 
+
+    @Transactional(rollbackFor = Throwable.class)
+    @Override
+    public Result insert(SysUser sysUser) {
+        SysUser su = sysUserMapper.findUserByUserName(sysUser.getUsername());
+        if (null != su) {
+            return Result.fail("用户名已经存在！");
+        }
+        sysUser.setPassword(passwordEncoder.encode(MD5Utils.md5(sysUser.getPassword())));
+        sysUserMapper.insert(sysUser);
+        Iterator<SysRole> iterator = sysUser.getRoles().iterator();
+        while (iterator.hasNext()) {
+            sysUserMapper.insertRole(sysUser.getId(), iterator.next().getId());
+        }
+        return Result.success("成功插入用户信息");
+    }
+
+    @Transactional(rollbackFor = Throwable.class)
+    @Override
+    public void delete(Long userID) {
+        sysUserMapper.delete(userID);
+        sysUserMapper.deleteRole(userID);
+    }
+
+    @Transactional(rollbackFor = Throwable.class)
+    @Override
+    public Result update(SysUser sysUser) {
+        redisUtils.delete("java_sport:sys_user:" + sysUser.getUsername());
+        sysUserMapper.deleteRole(sysUser.getId());
+        List<SysRole> roles = sysUser.getRoles();
+        if (roles != null) {
+            Iterator<SysRole> iterator = roles.iterator();
+            while (iterator.hasNext()) {
+                sysUserMapper.insertRole(sysUser.getId(), iterator.next().getId());
+            }
+        }
+        if (sysUser.getPassword() != null) {
+            sysUser.setPassword(passwordEncoder.encode(MD5Utils.md5(sysUser.getPassword())));
+        }
+        sysUserMapper.update(sysUser);
+        return Result.success("用户信息修改成功！");
+    }
 
     @Override
     public Result findAll() {
         log.info("获取所有用户信息");
         return Result.success("查询成功", sysUserMapper.findAll());
+    }
+
+    @Override
+    public List<SysUser> findPage(QueryInfo queryInfo) {
+        List<SysUser> list = sysUserMapper.findPage(queryInfo);
+        list.forEach(item -> {
+            item.setName(item.getUsername());
+            item.setRoles(sysUserMapper.findRoles(item.getId()));
+            item.setPassword(null);
+        });
+        return list;
+    }
+
+    @Override
+    public String findAvatar(Long id) {
+        return sysUserMapper.findAvatar(id);
+    }
+
+    @Override
+    public SysUser findUser(String email) {
+        return sysUserMapper.findUserByEmail(email);
     }
 
     @Override
@@ -60,7 +127,7 @@ public class SysUserServiceImpl implements SysUserService {
 
 
     @Override
-    public Result login(LoginVo loginVo) {
+    public Result login(LoginVO loginVo) {
         log.info("开始登录");
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginVo.getUsername());
         if (userDetails == null || !passwordEncoder.matches(MD5Utils.md5(loginVo.getPassword()), userDetails.getPassword())) {
