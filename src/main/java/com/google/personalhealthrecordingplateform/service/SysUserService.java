@@ -38,7 +38,6 @@ public interface SysUserService extends UserDetailsService {
      */
     Result update(SysUser sysUser);
 
-
     /**
      * 获取所有用户的信息
      *
@@ -84,7 +83,14 @@ public interface SysUserService extends UserDetailsService {
      * @param email 邮箱
      * @return true OR false
      */
-    SysUser findUser(String email);
+    SysUser findUserByEmail(String email);
 
+    /**
+     * 查找数据库中是否包含该电话号码对应的用户记录
+     *
+     * @param phoneNumber 电话号码
+     * @return 用户信息
+     */
+    SysUser findUserByPhoneNumber(String phoneNumber);
 
 }

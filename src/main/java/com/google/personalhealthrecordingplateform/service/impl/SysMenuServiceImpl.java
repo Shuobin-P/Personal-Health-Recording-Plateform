@@ -55,7 +55,7 @@ public class SysMenuServiceImpl implements SysMenuService {
         if (list == null) {
             list = sysMenuMapper.findParents();
             redisUtils.add("java_sport:sys_menu:1", list);
-            redisUtils.expire("java_sport:sys_menu:1", 600);
+            redisUtils.setExpiration("java_sport:sys_menu:1", 600);
         }
         return Result.success("成功查询到所有父级菜单", list);
     }

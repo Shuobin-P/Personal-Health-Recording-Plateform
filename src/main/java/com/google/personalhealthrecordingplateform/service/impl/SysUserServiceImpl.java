@@ -31,23 +31,22 @@ import java.util.Map;
 @Service
 @Slf4j
 public class SysUserServiceImpl implements SysUserService {
+    private final RedisUtils redisUtils;
     private final TokenUtils tokenUtils;
     private final SysUserMapper sysUserMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
-    @Autowired
-    private RedisUtils redisUtils;
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 
-
     @Autowired
-    public SysUserServiceImpl(TokenUtils tokenUtils, PasswordEncoder passwordEncoder, SysUserMapper sysUserMapper, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
+    public SysUserServiceImpl(TokenUtils tokenUtils, SysUserMapper sysUserMapper, PasswordEncoder passwordEncoder, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService, RedisUtils redisUtils) {
         this.tokenUtils = tokenUtils;
-        this.passwordEncoder = passwordEncoder;
         this.sysUserMapper = sysUserMapper;
+        this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
+        this.redisUtils = redisUtils;
     }
 
 
@@ -116,8 +115,13 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
-    public SysUser findUser(String email) {
+    public SysUser findUserByEmail(String email) {
         return sysUserMapper.findUserByEmail(email);
+    }
+
+    @Override
+    public SysUser findUserByPhoneNumber(String phoneNumber) {
+        return sysUserMapper.findUserByPhoneNumber(phoneNumber);
     }
 
     @Override

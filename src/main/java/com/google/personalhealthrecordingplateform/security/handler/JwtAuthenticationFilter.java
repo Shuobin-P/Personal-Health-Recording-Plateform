@@ -21,24 +21,25 @@ import java.io.IOException;
 
 /**
  * 这个过滤器是用来处理已经登录过的，即请求中包含token的用户请求。
+ *
  * @author 31204
  */
 @Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
 
-    @Autowired
     private TokenUtils tokenUtils;
+    private UserDetailsService userDetailsService;
 
     @Autowired
-    @Qualifier("userDetailsServiceImp")
-    private UserDetailsService userDetailsService;
+    public JwtAuthenticationFilter(TokenUtils tokenUtils, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
+        this.tokenUtils = tokenUtils;
+        this.userDetailsService = userDetailsService;
+    }
 
     //TODO 与后端进行通信使用http协议，而不是使用https，jwt容易被窃取
     @Override

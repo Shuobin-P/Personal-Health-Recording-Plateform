@@ -22,11 +22,11 @@ public class RedisUtils {
     /**
      * 给一个指定的 key 值附加过期时间
      *
-     * @param key
-     * @param time
+     * @param key  键
+     * @param time 秒
      * @return
      */
-    public boolean expire(String key, long time) {
+    public boolean setExpiration(String key, long time) {
         return redisTemplate.expire(key, time, TimeUnit.SECONDS);
     }
 

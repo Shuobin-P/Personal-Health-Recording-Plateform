@@ -2,6 +2,7 @@ package com.google.personalhealthrecordingplateform.exception;
 
 import com.google.personalhealthrecordingplateform.util.Result;
 import com.qiniu.common.QiniuException;
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -47,6 +48,13 @@ public class GlobalException {
     @ExceptionHandler(value = MessagingException.class)
     public Result exception(MessagingException e) {
         log.error("邮件发送异常-->{}", e.getMessage());
+        return Result.fail(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = TencentCloudSDKException.class)
+    public Result exception(TencentCloudSDKException e) {
+        log.error("短信发送异常-->{}", e.getMessage());
         return Result.fail(e.getMessage());
     }
 

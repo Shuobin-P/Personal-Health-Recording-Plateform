@@ -1,17 +1,16 @@
 package com.google.personalhealthrecordingplateform.controller;
 
 import com.google.personalhealthrecordingplateform.entity.SysUser;
+import com.google.personalhealthrecordingplateform.service.SmsService;
 import com.google.personalhealthrecordingplateform.service.SysUserService;
 import com.google.personalhealthrecordingplateform.util.*;
 import com.google.personalhealthrecordingplateform.vo.MailVO;
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
@@ -30,12 +29,14 @@ import java.io.IOException;
 public class ToolController {
     private final QiniuUtils qiniuUtils;
     private final EmailUtils emailUtils;
+    private final SmsService smsService;
     private final SysUserService sysUserService;
 
     @Autowired
-    public ToolController(QiniuUtils qiniuUtils, EmailUtils emailUtils, SysUserService sysUserService) {
+    public ToolController(QiniuUtils qiniuUtils, EmailUtils emailUtils, SmsService smsService, SysUserService sysUserService) {
         this.qiniuUtils = qiniuUtils;
         this.emailUtils = emailUtils;
+        this.smsService = smsService;
         this.sysUserService = sysUserService;
     }
 
@@ -52,7 +53,7 @@ public class ToolController {
     @PostMapping("/forget/password")
     public Result forgetPassword(@RequestBody MailVO mailVo) throws MessagingException {
         log.info("进入忘记密码方法");
-        SysUser sysUser = sysUserService.findUser(mailVo.receivers[0]);
+        SysUser sysUser = sysUserService.findUserByEmail(mailVo.receivers[0]);
         if (sysUser == null) {
             return Result.fail("该邮箱未注册过账号");
         } else {
@@ -68,4 +69,21 @@ public class ToolController {
 
     }
 
+    @ApiOperation(value = "短信验证码")
+    @PostMapping("/sms")
+    public Result sendSms(@RequestParam String phoneNumber) throws TencentCloudSDKException {
+        //TODO 先检查数据库中是否存在该电话号码，如果不存在则告知用户该电话号码不存在
+        // 前端把电话号码发过来，后端生成验证码，同时要运营商向指定电话号码发送包含验证码的短信，把电话号码，验证码 存储到哪里？同时验证码还要设置存在期限。同时向电话号主人发送短信
+        // 等前端输入验证码，发送post到login接口，对loginVO进行判断，如果type = 2，则与redis存储的电话号码，验证码进行比对，
+        // 如果正确，判断验证码是否过期
+        //          如果过期了，告知用户验证码已失效
+        //          否则，返回一个一个token，并跳转到用户首页。
+        // 如果错误，告知用户验证码错误。
+        SysUser sysUser = sysUserService.findUserByPhoneNumber(phoneNumber);
+        if (sysUser == null) {
+            return Result.fail("该电话号码没有注册过账号");
+        }
+        smsService.sendVerificationCode(phoneNumber);
+        return Result.success("已发送包含验证码的短信，注意查收");
+    }
 }

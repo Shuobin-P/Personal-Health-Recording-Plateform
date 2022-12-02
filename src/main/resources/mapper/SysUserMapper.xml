@@ -198,4 +198,10 @@
         FROM sys_user
         WHERE email = #{email}
     </select>
+
+    <select id="findUserByPhoneNumber" parameterType="String" resultType="SysUser">
+        SELECT *
+        FROM sys_user
+        WHERE phone_number = #{phoneNumber}
+    </select>
 </mapper>
