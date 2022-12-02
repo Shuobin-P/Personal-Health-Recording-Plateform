@@ -6,6 +6,7 @@ import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 
@@ -34,6 +35,7 @@ public class QiniuConfig {
     }
 
     @Bean
+    @Qualifier("qiniuUploadManager")
     public UploadManager getUploadManager(Configuration cfg) {
         cfg.resumableUploadAPIVersion = Configuration.ResumableUploadAPIVersion.V2;
         return new UploadManager(cfg);

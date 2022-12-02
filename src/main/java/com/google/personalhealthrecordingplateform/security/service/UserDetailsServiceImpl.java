@@ -36,7 +36,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         //在缓存中
         if (redisUtils.hasKey(username)) {
             sysUser = (SysUser) redisUtils.get("java_sport:sys_user:" + username);
-            redisUtils.expire("java_sport:sys_user:" + username, 600);
+            redisUtils.setExpiration("java_sport:sys_user:" + username, 600);
         } else {
             //不在缓存中
             sysUser = sysUserMapper.findUserByUserName(username);
@@ -60,7 +60,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             }
             redisUtils.add("java_sport:sys_user:" + username, sysUser);
             //缓存设置的时间应该为多长合适？因为是用户的账号，密码，邮件地址，头像，只要用户进行登录，这些东西就需要
-            redisUtils.expire("java_sport:sys_user:" + username, 600);
+            redisUtils.setExpiration("java_sport:sys_user:" + username, 600);
         }
 
         return sysUser;
