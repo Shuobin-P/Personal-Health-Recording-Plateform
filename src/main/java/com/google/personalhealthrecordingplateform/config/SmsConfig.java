@@ -1,10 +1,6 @@
 package com.google.personalhealthrecordingplateform.config;
 
-import com.tencentcloudapi.common.Credential;
-import com.tencentcloudapi.common.profile.ClientProfile;
-import com.tencentcloudapi.common.profile.HttpProfile;
-import com.tencentcloudapi.sms.v20210111.SmsClient;
-import com.tencentcloudapi.sms.v20210111.models.SendSmsRequest;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,53 +13,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SmsConfig {
 
-    @Value("${sms.secretId}")
-    private String secretId;
+    @Value("${sms.accessKeyId}")
+    private String accessKeyId;
 
-    @Value("${sms.secretKey}")
-    private String secretKey;
-
-    @Value("${sms.sdkAppId}")
-    private String sdkAppId;
-
-    @Value("${sms.signName}")
-    private String signName;
-
-    @Value("${sms.templateId}")
-    private String templateId;
-
+    @Value("${sms.accessKeySecret}")
+    private String accessKeySecret;
 
     @Bean
-    public Credential getCredential() {
-        return new Credential(secretId, secretKey);
+    public com.aliyun.dysmsapi20170525.Client createClient() throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                // 必填，您的 AccessKey ID
+                .setAccessKeyId(accessKeyId)
+                // 必填，您的 AccessKey Secret
+                .setAccessKeySecret(accessKeySecret);
+        // 访问的域名
+        config.endpoint = "dysmsapi.aliyuncs.com";
+        return new com.aliyun.dysmsapi20170525.Client(config);
     }
 
-    @Bean
-    public HttpProfile getHttpProfile() {
-        HttpProfile httpProfile = new HttpProfile();
-        httpProfile.setReqMethod("POST");
-        httpProfile.setEndpoint("sms.tencentcloudapi.com");
-        return httpProfile;
-    }
 
-    @Bean
-    public ClientProfile getClientProfile(HttpProfile httpProfile) {
-        ClientProfile clientProfile = new ClientProfile();
-        clientProfile.setHttpProfile(httpProfile);
-        return clientProfile;
-    }
-
-    @Bean
-    public SmsClient getSmsClient(Credential cred, ClientProfile clientProfile) {
-        return new SmsClient(cred, "ap-guangzhou", clientProfile);
-    }
-
-    @Bean
-    public SendSmsRequest getSendSmsRequest() {
-        SendSmsRequest req = new SendSmsRequest();
-        req.setSmsSdkAppId(sdkAppId);
-        req.setSignName(signName);
-        req.setTemplateId(templateId);
-        return req;
-    }
 }

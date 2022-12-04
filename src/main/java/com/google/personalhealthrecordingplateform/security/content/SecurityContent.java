@@ -1,5 +1,8 @@
 package com.google.personalhealthrecordingplateform.security.content;
 
+/**
+ * @author W&F
+ */
 public class SecurityContent {
     public static String[] WHITE_LIST = {
             "/user/login",
@@ -11,5 +14,6 @@ public class SecurityContent {
             "configuration/ui",
             "configuration/security",
             "/tool/forget/password",
+            "/tool/sms"
     };
 }

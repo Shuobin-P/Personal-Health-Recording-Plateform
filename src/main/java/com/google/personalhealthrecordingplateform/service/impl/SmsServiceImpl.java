@@ -1,14 +1,15 @@
 package com.google.personalhealthrecordingplateform.service.impl;
 
+
+import com.aliyun.dysmsapi20170525.Client;
+import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
+import com.aliyun.tea.TeaException;
 import com.google.personalhealthrecordingplateform.service.SmsService;
 import com.google.personalhealthrecordingplateform.util.RedisUtils;
 import com.google.personalhealthrecordingplateform.util.SmsUtils;
-import com.tencentcloudapi.common.exception.TencentCloudSDKException;
-import com.tencentcloudapi.sms.v20210111.SmsClient;
-import com.tencentcloudapi.sms.v20210111.models.SendSmsRequest;
-import com.tencentcloudapi.sms.v20210111.models.SendSmsResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  * @author W&F
@@ -16,31 +17,44 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @date 2022/11/30 21:08
  */
 @Slf4j
+@Service
 public class SmsServiceImpl implements SmsService {
-    private SmsClient smsClient;
-    private SendSmsRequest smsReq;
+    private Client client;
     private RedisUtils redisUtils;
 
-    @Autowired
-    public SmsServiceImpl(RedisUtils redisUtils, SmsClient smsClient, SendSmsRequest smsReq) {
-        this.smsClient = smsClient;
-        this.smsReq = smsReq;
+    @Value("${sms.signName}")
+    private String signName;
+
+    @Value("${sms.templateId}")
+    private String templateId;
+
+    public SmsServiceImpl(Client client, RedisUtils redisUtils) {
+        this.client = client;
         this.redisUtils = redisUtils;
     }
 
 
     @Override
-    public void sendVerificationCode(String phoneNumber) throws TencentCloudSDKException {
-        //要运营商向指定电话号码发送包含验证码的短信，并把电话号码和验证码存储到redis中，并设置5分钟的期限
-        //参考：https://cloud.tencent.com/document/product/382/43194
-        phoneNumber = "+86" + phoneNumber;
+    public void sendVerificationCode(String phoneNumber) {
+        // 初始化 Client，采用 AK&SK 鉴权访问的方式，此方式可能会存在泄漏风险，建议使用 STS 方式。鉴权访问方式请参考：https://help.aliyun.com/document_detail/378657.html
+        // 获取 AK 链接：https://usercenter.console.aliyun.com
         String vcode = SmsUtils.getVerificationCode();
-        smsReq.setTemplateParamSet(new String[]{vcode, "5"});
-        smsReq.setPhoneNumberSet(new String[]{phoneNumber});
-        SendSmsResponse res = smsClient.SendSms(smsReq);
-        //把电话号码和验证码存入redis中
-        redisUtils.add("java_sport:sys_user:" + phoneNumber, vcode);
-        redisUtils.setExpiration("java_sport:sys_user:" + phoneNumber, 300);
-        log.info(SendSmsResponse.toJsonString(res));
+        redisUtils.add("java_sport:sys_user:phone_number:" + phoneNumber, vcode);
+        redisUtils.setExpiration("java_sport:sys_user:phone_number:" + phoneNumber, 300);
+        com.aliyun.dysmsapi20170525.models.SendSmsRequest sendSmsRequest = new com.aliyun.dysmsapi20170525.models.SendSmsRequest()
+                .setSignName(signName)
+                .setTemplateCode(templateId)
+                .setPhoneNumbers(phoneNumber)
+                .setTemplateParam("{\"code\":\"" + vcode + "\"}");
+
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+        try {
+            client.sendSmsWithOptions(sendSmsRequest, runtime);
+        } catch (TeaException error) {
+            System.out.println(error);
+        } catch (Exception _error) {
+            TeaException error = new TeaException(_error.getMessage(), _error);
+            System.out.println(error);
+        }
     }
 }

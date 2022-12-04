@@ -125,6 +125,11 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
+    public String findUserNameByPhoneNumber(String phoneNumber) {
+        return sysUserMapper.findUserNameByPhoneNumber(phoneNumber);
+    }
+
+    @Override
     public Result selectByID(Integer id) {
         return Result.success("找到一条数据", sysUserMapper.selectByID(3));
     }
@@ -133,18 +138,35 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public Result login(LoginVO loginVo) {
         log.info("开始登录");
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginVo.getUsername());
-        if (userDetails == null || !passwordEncoder.matches(MD5Utils.md5(loginVo.getPassword()), userDetails.getPassword())) {
-            return Result.fail("账号或者密码错误，请重新输入");
+        UserDetails userDetails = null;
+        //从数据库中拿到用户的相关数据
+        if ("1".equals(loginVo.getType())) {
+            userDetails = userDetailsService.loadUserByUsername(loginVo.getUsername());
+            if (userDetails == null || !passwordEncoder.matches(MD5Utils.md5(loginVo.getPassword()), userDetails.getPassword())) {
+                return Result.fail("账号或者密码错误，请重新输入");
+            }
+            if (!userDetails.isEnabled()) {
+                return Result.fail("该账户已被禁用");
+            }
+        } else if ("2".equals(loginVo.getType())) {
+            //从redis中拿出phonenumber,vocde，如果正确且没有过期,则拿到电话号码对应的用户数据
+            String val = (String) redisUtils.get("java_sport:sys_user:phone_number:" + loginVo.getPhoneNumber());
+            if (null != val && val.equals(loginVo.getCode())) {
+                userDetails = userDetailsService.loadUserByUsername(this.findUserNameByPhoneNumber(loginVo.getPhoneNumber()));
+            } else {
+                return Result.fail("验证码已过期，请重新发送");
+            }
         }
-        if (!userDetails.isEnabled()) {
-            return Result.fail("该账户已被禁用");
-        }
+
         Authentication usernamePasswordAuthenticationToken
-                = new UsernamePasswordAuthenticationToken(userDetails.getUsername(),
-                userDetails.getPassword(),
-                userDetails.getAuthorities());
+                = new UsernamePasswordAuthenticationToken
+                (
+                        userDetails.getUsername(),
+                        userDetails.getPassword(),
+                        userDetails.getAuthorities()
+                );
         log.info("在SecurityContextHolder中添加登录者信息");
+
         //这里完成了身份认证，而且在SecurityContext中加入了authentication对象。为什么后面经过jwt过滤器的时候，SecurityContext中没有authentication对象
         //答：因为当前请求是有A线程处理的，后面再次发送的请求是由B线程处理的，A线程中的SecurityContext和B线程的SecurityContext不相同
         //此时我们在A线程的SecurityContext中加入Authentication，但是B线程的SecurityContext.getAuthentication中确是为空。

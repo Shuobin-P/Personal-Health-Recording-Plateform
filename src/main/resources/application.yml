@@ -53,9 +53,8 @@ qiniu:
   path: rlp9l16g7.hn-bkt.clouddn.com
 
 sms:
-  secretId: AKIDdpskY9ZmjSyGNGtITPuACzWorfEYdUD6
-  secretKey: hLkuoTu64nbFeniRr33sY1GH4ez72lFW
-  sdkAppId: 1400773921
-  signName: 彬哥的小站公众号
-  templateId: 1624005
+  accessKeyId: LTAI5tLkUWadYCENN8oDakAX
+  accessKeySecret: wyVuFu1ra3P3szFWp5GlXwCXpmi9rZ
+  signName:
+  templateId: SMS_262500445
 

@@ -16,5 +16,9 @@ public class LoginVO {
     @ApiModelProperty(value = "密码", dataType = "java.lang.String")
     private String password;
 
+    @ApiModelProperty(value = "登录方式", dataType = "java.lang.String")
     private String type;
+
+    String phoneNumber;
+    String code;
 }
