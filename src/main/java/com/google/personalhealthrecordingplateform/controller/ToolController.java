@@ -3,9 +3,11 @@ package com.google.personalhealthrecordingplateform.controller;
 import com.google.personalhealthrecordingplateform.entity.SysUser;
 import com.google.personalhealthrecordingplateform.service.SmsService;
 import com.google.personalhealthrecordingplateform.service.SysUserService;
-import com.google.personalhealthrecordingplateform.util.*;
+import com.google.personalhealthrecordingplateform.util.EmailUtils;
+import com.google.personalhealthrecordingplateform.util.QiniuUtils;
+import com.google.personalhealthrecordingplateform.util.Result;
+import com.google.personalhealthrecordingplateform.util.StringUtils;
 import com.google.personalhealthrecordingplateform.vo.MailVO;
-import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +73,7 @@ public class ToolController {
 
     @ApiOperation(value = "短信验证码")
     @PostMapping("/sms")
-    public Result sendSms(@RequestParam String phoneNumber) throws TencentCloudSDKException {
+    public Result sendSms(@RequestParam("phoneNumber") String phoneNumber) {
         //TODO 先检查数据库中是否存在该电话号码，如果不存在则告知用户该电话号码不存在
         // 前端把电话号码发过来，后端生成验证码，同时要运营商向指定电话号码发送包含验证码的短信，把电话号码，验证码 存储到哪里？同时验证码还要设置存在期限。同时向电话号主人发送短信
         // 等前端输入验证码，发送post到login接口，对loginVO进行判断，如果type = 2，则与redis存储的电话号码，验证码进行比对，

@@ -93,4 +93,12 @@ public interface SysUserService extends UserDetailsService {
      */
     SysUser findUserByPhoneNumber(String phoneNumber);
 
+    /**
+     * 查找数据库中是否包含该电话号码对应的用户
+     *
+     * @param phoneNumber 电话号码
+     * @return 用户名
+     */
+    String findUserNameByPhoneNumber(String phoneNumber);
+
 }

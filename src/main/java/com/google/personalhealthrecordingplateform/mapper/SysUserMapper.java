@@ -103,4 +103,12 @@ public interface SysUserMapper {
      * @return 用户信息
      */
     SysUser findUserByPhoneNumber(String phoneNumber);
+
+    /**
+     * 通过电话号码找到对应的用户名
+     *
+     * @param phoneNumber 电话号码
+     * @return 用户名
+     */
+    String findUserNameByPhoneNumber(String phoneNumber);
 }

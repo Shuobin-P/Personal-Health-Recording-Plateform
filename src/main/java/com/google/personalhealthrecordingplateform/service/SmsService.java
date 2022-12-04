@@ -1,6 +1,5 @@
 package com.google.personalhealthrecordingplateform.service;
 
-import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 
 /**
  * @author W&F
@@ -12,6 +11,7 @@ public interface SmsService {
      * 发送验证码
      *
      * @param phoneNumber 电话号码
+     * @return 短信发送流水号
      */
-    void sendVerificationCode(String phoneNumber) throws TencentCloudSDKException;
+    void sendVerificationCode(String phoneNumber);
 }

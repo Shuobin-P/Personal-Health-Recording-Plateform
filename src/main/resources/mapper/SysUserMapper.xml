@@ -204,4 +204,10 @@
         FROM sys_user
         WHERE phone_number = #{phoneNumber}
     </select>
+
+    <select id="findUserNameByPhoneNumber" parameterType="String" resultType="String">
+        SELECT user_name
+        FROM sys_user
+        WHERE phone_number = #{phoneNumber}
+    </select>
 </mapper>

@@ -7,7 +7,6 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +30,7 @@ public class QiniuUtils {
 
 
     @Autowired
-    public QiniuUtils(Auth auth, @Qualifier("qiniuUploadManager") UploadManager uploadManager, BucketManager bucketManager) {
+    public QiniuUtils(Auth auth, UploadManager uploadManager, BucketManager bucketManager) {
         this.auth = auth;
         this.uploadManager = uploadManager;
         this.bucketManager = bucketManager;
