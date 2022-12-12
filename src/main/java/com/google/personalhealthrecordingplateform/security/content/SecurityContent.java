@@ -14,6 +14,6 @@ public class SecurityContent {
             "configuration/ui",
             "configuration/security",
             "/tool/forget/password",
-            "/tool/sms"
+            "/tool/sms",
     };
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.personalhealthrecordingplateform.mapper.FoodTypeMapper">
+    <select id="getAllFoodType" resultType="FoodType">
+        SELECT *
+        FROM food_type
+    </select>
+
+    <select id="findFoodTypePage" parameterType="java.lang.String" resultType="FoodType">
+        SELECT *
+        FROM food_type
+        <if test="queryString != null and queryString.length > 0">
+            where title LIKE CONCAT('%', #{queryString}, '%')
+        </if>
+    </select>
+
+    <select id="findTypeIDByTypeTitle" parameterType="String" resultType="Long">
+        SELECT id
+        FROM food_type
+        WHERE title = #{title}
+    </select>
+</mapper>

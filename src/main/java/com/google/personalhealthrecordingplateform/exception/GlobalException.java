@@ -21,7 +21,8 @@ import javax.mail.MessagingException;
 @Slf4j
 @RestControllerAdvice
 public class GlobalException {
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 //    @ExceptionHandler(value = RuntimeException.class)
 //    public Result exception(RuntimeException e) {
 //        log.error("系统运行时异常-->{}", e.getMessage());
