@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.personalhealthrecordingplateform.mapper.FoodMapper">
+    <resultMap id="mainMap" type="Food">
+        <result property="id" column="id"></result>
+        <result property="title" column="title"></result>
+        <result property="typeId" column="type_id"></result>
+        <result property="imageUrls" column="image_urls"></result>
+        <result property="nutrient" column="nutrient"></result>
+        <result property="heat" column="heat"></result>
+        <result property="protein" column="protein"></result>
+        <result property="fat" column="fat"></result>
+        <result property="carbonWater" column="carbon_water"></result>
+        <result property="dietaryFiber" column="dietary_fiber"></result>
+        <result property="vitaminA" column="vitamin_a"></result>
+        <result property="vitaminC" column="vitamin_c"></result>
+        <result property="vitaminE" column="vitamin_e"></result>
+        <result property="carrot" column="carrot"></result>
+        <result property="vitaminB1" column="vitamin_b1"></result>
+        <result property="vitaminB2" column="vitamin_b2"></result>
+        <result property="niacin" column="niacin"></result>
+        <result property="cholesterol" column="cholesterol"></result>
+        <result property="magnesium" column="magnesium"></result>
+        <result property="iron" column="iron"></result>
+        <result property="calcium" column="calcium"></result>
+        <result property="zinc" column="zinc"></result>
+        <result property="copper" column="copper"></result>
+        <result property="manganese" column="manganese"></result>
+        <result property="potassium" column="potassium"></result>
+        <result property="phosphorus" column="phosphorus"></result>
+        <result property="sodium" column="sodium"></result>
+        <result property="selenium" column="selenium"></result>
+    </resultMap>
+
+    <insert id="insert" parameterType="Food">
+        INSERT INTO food
+        VALUES (null, #{title}, #{typeId}, #{imageUrls}, #{nutrient}, #{heat}, #{protein}, #{fat}, #{carbonWater},
+                #{dietaryFiber}, #{vitaminA},
+                #{vitaminC}, #{vitaminE}, #{carrot}, #{vitaminB1}, #{vitaminB2}, #{niacin}, #{cholesterol},
+                #{magnesium}, #{iron}, #{calcium},
+                #{zinc}, #{copper}, #{manganese}, #{potassium}, #{phosphorus}, #{sodium}, #{selenium})
+    </insert>
+
+    <insert id="batchInsert">
+        INSERT INTO food
+        VALUES
+        <foreach collection="list" separator="," item="item">
+            (null,#{item.title}, #{item.typeId}, #{item.imageUrls}, #{item.nutrient},
+            #{item.heat}, #{item.protein}, #{item.fat}, #{item.carbonWater},
+            #{item.dietaryFiber}, #{item.vitaminA},
+            #{item.vitaminC}, #{item.vitaminE}, #{item.carrot}, #{item.vitaminB1},
+            #{item.vitaminB2}, #{item.niacin}, #{item.cholesterol},
+            #{item.magnesium}, #{item.iron}, #{item.calcium},#{item.zinc}, #{item.copper},
+            #{item.manganese}, #{item.potassium}, #{item.phosphorus}, #{item.sodium}, #{item.selenium})
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM food
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="Food">
+        UPDATE food
+        <set>
+            <if test="title != null and title.length > 0">
+                title = #{title},
+            </if>
+            <if test="typeId != null">
+                type_id = #{typeId},
+            </if>
+            <if test="imageUrls != null and imageUrls.length > 0">
+                image_urls = #{imageUrls},
+            </if>
+            <if test="nutrient != null">
+                nutrient = #{nutrient},
+            </if>
+            <if test="heat != null">
+                heat = #{heat},
+            </if>
+            <if test="protein != null">
+                protein = #{protein},
+            </if>
+            <if test="fat != null">
+                fat = #{fat},
+            </if>
+            <if test="carbonWater != null">
+                carbon_water = #{carbonWater},
+            </if>
+            <if test="dietaryFiber != null">
+                dietary_fiber = #{dietaryFiber},
+            </if>
+            <if test="vitaminA != null">
+                vitamin_a = #{vitaminA},
+            </if>
+            <if test="vitaminC != null">
+                vitamin_c = #{vitaminC},
+            </if>
+            <if test="vitaminE != null">
+                vitamin_e = #{vitaminE},
+            </if>
+            <if test="carrot != null">
+                carrot = #{carrot},
+            </if>
+            <if test="vitaminB1 != null">
+                vitamin_b1 = #{vitaminB1},
+            </if>
+            <if test="vitaminB2 != null">
+                vitamin_b2 = #{vitaminB2},
+            </if>
+            <if test="niacin != null">
+                niacin = #{niacin},
+            </if>
+            <if test="cholesterol != null">
+                cholesterol = #{cholesterol},
+            </if>
+            <if test="magnesium != null">
+                magnesium = #{magnesium},
+            </if>
+            <if test="iron != null">
+                iron = #{iron},
+            </if>
+            <if test="calcium != null">
+                calcium = #{calcium},
+            </if>
+            <if test="zinc != null">
+                zinc = #{zinc},
+            </if>
+            <if test="copper != null">
+                copper = #{copper},
+            </if>
+            <if test="manganese != null">
+                manganese = #{manganese},
+            </if>
+            <if test="potassium != null">
+                potassium = #{potassium},
+            </if>
+            <if test="phosphorus != null">
+                phosphorus = #{phosphorus},
+            </if>
+            <if test="sodium != null">
+                sodium = #{sodium},
+            </if>
+            <if test="selenium != null">
+                selenium = #{selenium},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="findFoodPage" parameterType="java.lang.String" resultMap="mainMap">
+        SELECT * FROM food
+        <if test="queryString != null and queryString.length > 0">
+            WHERE title LIKE concat('%', #{queryString}, '%')
+        </if>
+    </select>
+
+</mapper>
