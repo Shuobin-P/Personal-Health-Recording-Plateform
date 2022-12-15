@@ -45,9 +45,7 @@ public class ToolController {
     @ApiOperation(value = "七牛云文件上传")
     @PostMapping("/upload")
     public Result uploadAvatar(@RequestBody MultipartFile file) throws IOException {
-        String url = qiniuUtils.upload((FileInputStream) file.getInputStream(),
-                StringUtils.getRandomImgName(file.getOriginalFilename()));
-
+        String url = qiniuUtils.upload((FileInputStream) file.getInputStream(), file.getOriginalFilename());
         return Result.success("成功上传头像", url);
     }
 

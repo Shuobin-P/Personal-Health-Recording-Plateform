@@ -3,6 +3,7 @@ package com.google.personalhealthrecordingplateform.util;
 import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 public class StringUtils {
@@ -127,6 +128,23 @@ public class StringUtils {
             sb.append(chars.charAt(randomIndex));
         }
 
+        return sb.toString();
+    }
+
+    /**
+     * 生成指定长度的随机字符串
+     *
+     * @param length
+     * @return
+     */
+    public static String getRandomString(int length) {
+        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < length; i++) {
+            int number = random.nextInt(62);
+            sb.append(str.charAt(number));
+        }
         return sb.toString();
     }
 }
