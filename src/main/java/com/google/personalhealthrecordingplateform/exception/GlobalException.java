@@ -22,12 +22,12 @@ import javax.mail.MessagingException;
 @RestControllerAdvice
 public class GlobalException {
 
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    @ExceptionHandler(value = RuntimeException.class)
-//    public Result exception(RuntimeException e) {
-//        log.error("系统运行时异常-->{}", e.getMessage());
-//        return Result.fail(e.getMessage());
-//    }
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = RuntimeException.class)
+    public Result exception(RuntimeException e) {
+        log.error("系统运行时异常-->{}", e.getMessage());
+        return Result.fail(e.getMessage());
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = UsernameNotFoundException.class)
@@ -50,5 +50,13 @@ public class GlobalException {
         log.error("邮件发送异常-->{}", e.getMessage());
         return Result.fail(e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = FoodTypeException.class)
+    public Result exception(FoodTypeException e) {
+        log.error("食物分类异常-->{}", e.getMessage());
+        return Result.fail(e.getMessage());
+    }
+
 
 }

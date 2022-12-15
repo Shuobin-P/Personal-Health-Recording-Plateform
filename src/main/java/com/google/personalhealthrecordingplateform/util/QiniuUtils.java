@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * @author W&F
@@ -39,17 +42,40 @@ public class QiniuUtils {
     /**
      * 上传文件，并获得文件的url
      *
+     * @param file
+     * @param fileName 包括文件类型后缀的完整文件名
      * @return 文件url
+     * @throws QiniuException
      */
     public String upload(FileInputStream file, String fileName) throws QiniuException {
+        fileName = StringUtils.getRandomImgName(fileName);
         String token = auth.uploadToken(bucketName);
         Response res = uploadManager.put(file, fileName, token, null, null);
         if (!res.isOK()) {
             throw new RuntimeException("上传七牛云出错:" + res);
         }
         return fileName;
-
     }
+
+    /**
+     * @param uploadBytes
+     * @param fileName    包括文件类型后缀的完整文件名
+     * @return
+     * @throws IOException
+     */
+    public String upload(byte[] uploadBytes, String fileName) throws IOException {
+        fileName = StringUtils.getRandomImgName(fileName);
+        String token = auth.uploadToken(bucketName);
+        ByteArrayInputStream byteInputStream = new ByteArrayInputStream(uploadBytes);
+        Response res = uploadManager.put(byteInputStream, fileName, token, null, null);
+        byteInputStream.close();
+        if (!res.isOK()) {
+            throw new RuntimeException("上传七牛云出错:" + res);
+        }
+        //TODO 这里好像不会返回url
+        return fileName;
+    }
+
 
     /**
      * 删除七牛云头像文件

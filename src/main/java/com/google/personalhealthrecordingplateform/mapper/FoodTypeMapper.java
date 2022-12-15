@@ -14,6 +14,27 @@ import java.util.List;
 
 @Mapper
 public interface FoodTypeMapper {
+    /**
+     * 添加食物分类
+     *
+     * @param foodType
+     */
+    void insert(FoodType foodType);
+
+    /**
+     * 删除食物分类
+     *
+     * @param id
+     */
+    void delete(Long id);
+
+    /**
+     * 修改食物分类
+     *
+     * @param foodType
+     */
+    void update(FoodType foodType);
+
 
     List<FoodType> getAllFoodType();
 

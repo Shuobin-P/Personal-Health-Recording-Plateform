@@ -3,7 +3,9 @@ package com.google.personalhealthrecordingplateform.service;
 import com.github.pagehelper.Page;
 import com.google.personalhealthrecordingplateform.entity.Food;
 import com.google.personalhealthrecordingplateform.entity.FoodType;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -17,13 +19,6 @@ public interface FoodService {
      * @param food
      */
     void insert(Food food);
-
-    /**
-     * 批量插入数据
-     *
-     * @param list
-     */
-    void batchInsert(List<Food> list);
 
     void delete(Long id);
 
@@ -50,6 +45,13 @@ public interface FoodService {
      */
     Page<Food> findFoodPage(String queryString);
 
+    void insertFoodType(FoodType foodType);
+
+    void deleteFoodType(Long id);
+
+    void updateFoodType(FoodType foodType);
+
+
     /**
      * 通过食物分类名找到对应的ID
      *
@@ -57,5 +59,12 @@ public interface FoodService {
      * @return 食物分类对应的ID
      */
     Long findTypeIDByTypeTitle(String type);
+
+    /**
+     * 批量导入食品信息
+     *
+     * @param file
+     */
+    void importFoodExcel(MultipartFile file) throws IOException, IllegalAccessException, InstantiationException;
 
 }
