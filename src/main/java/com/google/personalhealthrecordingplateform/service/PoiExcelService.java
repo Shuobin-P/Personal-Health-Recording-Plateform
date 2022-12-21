@@ -3,6 +3,7 @@ package com.google.personalhealthrecordingplateform.service;
 import com.google.personalhealthrecordingplateform.enumeration.ExcelTypeEnum;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,5 +29,8 @@ public interface PoiExcelService {
      * @throws InstantiationException
      */
     <T> List<T> read(InputStream excelIn, Class<T> dataClazz, ExcelTypeEnum excelTypeEnum) throws IOException, IllegalAccessException, InstantiationException;
-     Map<String, PictureData> getExcelPictures(Sheet sheet);
+
+    Map<String, PictureData> getExcelPictures(Sheet sheet);
+
+    XSSFWorkbook writeXSSFWorkbook(String sheetName, List<?> dataList, Class<?> clazz);
 }

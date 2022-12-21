@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.personalhealthrecordingplateform.mapper.SportNewsMapper">
+    <resultMap id="mainMap" type="SportNews">
+        <result property="createTime" column="create_time"></result>
+        <result property="createName" column="create_name"></result>
+        <result property="updateTime" column="update_time"></result>
+        <result property="updateName" column="update_name"></result>
+    </resultMap>
+
+    <insert id="insert" parameterType="SportNews">
+        INSERT INTO sport_news(title, content, create_time, create_name)
+        VALUES (#{title}, #{content}, #{createTime}, #{createName})
+    </insert>
+
+    <delete id="delete" parameterType="Long">
+        UPDATE sport_news
+        SET del=1
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="SportNews">
+        UPDATE sport_news
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="content != null">
+                `content` = #{content},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateName != null">
+                update_name = #{updateName}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <select id="findPage" resultType="SportNews" resultMap="mainMap">
+        SELECT * FROM sport_news WHERE del=0
+        <if test="queryString != null and queryString.length > 0">
+            and (title like concat('%', #{queryString}, '%') or content like concat('%', #{queryString}, '%'))
+        </if>
+    </select>
+</mapper>
