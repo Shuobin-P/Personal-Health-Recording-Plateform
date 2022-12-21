@@ -15,5 +15,6 @@ public class SecurityContent {
             "configuration/security",
             "/tool/forget/password",
             "/tool/sms",
+            "/goods/batchExport",
     };
 }

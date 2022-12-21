@@ -72,13 +72,12 @@ public class QiniuUtils {
         if (!res.isOK()) {
             throw new RuntimeException("上传七牛云出错:" + res);
         }
-        //TODO 这里好像不会返回url
         return fileName;
     }
 
 
     /**
-     * 删除七牛云头像文件
+     * 删除七牛云文件
      *
      * @param fileName 头像文件名
      * @throws QiniuException 七牛云异常

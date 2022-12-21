@@ -24,8 +24,8 @@ jwt:
 qiniu:
   accessKey: VjqyGJIWeKMORqLsJR-3CMSBiKTxYF25wC5CSPbc
   secretKey: adec1oMqUWZAUKPruXLwus2822HK9wMJwpTllO8J
-  bucketName: healthy-plateform-images
-  path: rlp9l16g7.hn-bkt.clouddn.com
+  bucketName: health-plateform-image
+  path: rn84b4df6.hn-bkt.clouddn.com
 
 sms:
   accessKeyId: LTAI5tLkUWadYCENN8oDakAX

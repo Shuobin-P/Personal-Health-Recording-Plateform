@@ -45,9 +45,6 @@ public class FoodController {
     @ApiOperation(value = "批量导入菜品")
     @PostMapping("/batchImport")
     public Result importBatchOfFood(@RequestParam("file") MultipartFile multipartFile) {
-        //TODO 导入excel文件,其中包含图片，并存入数据库。
-        //POI 若一个excel中包含有图片和文字，图片和文字要分开处理。
-        //TODO 参考博客：https://blog.csdn.net/wangzhihao1994/article/details/101177290
         try {
             foodService.importFoodExcel(multipartFile);
         } catch (Exception e) {

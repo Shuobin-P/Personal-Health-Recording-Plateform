@@ -2,6 +2,7 @@ package com.google.personalhealthrecordingplateform.exception;
 
 import com.google.personalhealthrecordingplateform.util.Result;
 import com.qiniu.common.QiniuException;
+import javassist.tools.web.BadHttpRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,20 +23,12 @@ import javax.mail.MessagingException;
 @RestControllerAdvice
 public class GlobalException {
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(value = RuntimeException.class)
-    public Result exception(RuntimeException e) {
-        log.error("系统运行时异常-->{}", e.getMessage());
-        return Result.fail(e.getMessage());
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = UsernameNotFoundException.class)
     public Result exception(UsernameNotFoundException e) {
         log.error("用户名或密码错误-->{}", e.getMessage());
         return Result.fail(e.getMessage());
     }
-
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = QiniuException.class)
@@ -47,7 +40,7 @@ public class GlobalException {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = MessagingException.class)
     public Result exception(MessagingException e) {
-        log.error("邮件发送异常-->{}", e.getMessage());
+        log.error("邮件操作异常-->{}", e.getMessage());
         return Result.fail(e.getMessage());
     }
 
@@ -58,5 +51,39 @@ public class GlobalException {
         return Result.fail(e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = SportNewsException.class)
+    public Result exception(SportNewsException e) {
+        log.error("食物分类异常-->{}", e.getMessage());
+        return Result.fail(e.getMessage());
+    }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = GoodsException.class)
+    public Result exception(GoodsException e) {
+        log.error("商品异常-->{}", e.getMessage());
+        return Result.fail(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = BadHttpRequest.class)
+    public Result exception(BadHttpRequest e) {
+        log.error("商品异常-->{}", e.getMessage());
+        return Result.fail(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = SportException.class)
+    public Result exception(SportException e) {
+        log.error("运动项目异常-->{}", e.getMessage());
+        return Result.fail(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = Exception.class)
+    public Result exception(Exception e) {
+        log.error("异常-->{}", e.getMessage());
+        e.printStackTrace();
+        return Result.fail(e.getMessage());
+    }
 }
