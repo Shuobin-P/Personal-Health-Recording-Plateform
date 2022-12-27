@@ -1,9 +1,14 @@
 package com.google.personalhealthrecordingplateform;
 
+import com.google.personalhealthrecordingplateform.util.TokenUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author W&F
@@ -27,6 +32,17 @@ public class ReflectTest {
         cl.getMethod("setSkiColor", int.class).invoke(blackPeople, 2222);
         System.out.println(blackPeople.getSkiColor());
 
+    }
+
+    @Test
+    public void test1() {
+        TokenUtils tokenUtils = new TokenUtils();
+        System.out.println("Fuck you Idiot");
+        Map<String, Object> map = new HashMap<>();
+        map.put("username", "ouUrt5PzNnDh8SiBBr_WyA3_myq0");
+        map.put("created", new Date());
+        String token = tokenUtils.generateToken(map);
+        System.out.println(token);
     }
 }
 

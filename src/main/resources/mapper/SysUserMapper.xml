@@ -114,11 +114,11 @@
         from sys_user;
     </select>
 
-    <!--    数据库返回结果和SysUser匹配不上-->
     <select id="findUserByUserName" resultMap="mainMap" parameterType="java.lang.String">
         select *
         from sys_user
-        where user_name = #{username};
+        where user_name = #{username}
+           OR open_id = #{username};
     </select>
 
     <select id="findRoles" parameterType="int" resultMap="roleMap">

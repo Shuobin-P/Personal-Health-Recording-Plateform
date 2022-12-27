@@ -31,3 +31,8 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
+
+# appid和secret不能使用测试号的
+mini:
+  appid: wxfb9f6a157d4f2458
+  appsecret: 37a056dbf465b9ed3b202c998722feec

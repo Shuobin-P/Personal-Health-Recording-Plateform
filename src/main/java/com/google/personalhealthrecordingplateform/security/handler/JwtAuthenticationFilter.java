@@ -44,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     //TODO 与后端进行通信使用http协议，而不是使用https，jwt容易被窃取
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        log.info("进入JWT过滤器");
         String header = request.getHeader(tokenHeader);
         //不要先检测这个token是否发生了篡改吗？但是https可以防止发送的报文发生篡改啊。
         //不要防止token被别人拿走吗？答：但是https可以防窃听。
@@ -53,9 +54,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith(tokenHead)) {
             String token = header.substring(tokenHead.length());
             String username = tokenUtils.getUsernameByToken(token);
-
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (!tokenUtils.isExpired(token)) {
+                    //使用JWT不是就已经能实现用户的登录状态保持吗？为什么还要使用下面这个，
+                    //得到用户的详细信息，为什么保存token到SecurityContext中
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     //UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null);
