@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 这个作者ta自己都不一定会，你跟着ta写代码，是不是脑子有问题。
+ * @author W&F
  */
 @Slf4j
 @Component
@@ -24,14 +24,16 @@ public class TokenUtils {
     @Value("${jwt.expiration}")
     private long expiration;
 
+
     public String generateToken(UserDetails userDetails) {
+        log.info("生成token");
         Map<String, Object> map = new HashMap<>();
         map.put("username", userDetails.getUsername());
         map.put("created", new Date());
-        return this.generateToken(map);
+        return generateToken(map);
     }
 
-    private String generateToken(Map<String, Object> map) {
+    public String generateToken(Map<String, Object> map) {
         return Jwts.builder()
                 .setClaims(map)
                 .signWith(SignatureAlgorithm.HS512, secret)
@@ -40,8 +42,8 @@ public class TokenUtils {
     }
 
     /**
-     * 该方法是否有判断该token是否为我们服务器发送的功能吗
-     * 有，若不是我们服务器生成的token，那么调用ta会返回null
+     * 该方法是否有判断该token是否为我们服务器发送的token
+     * 若不是我们服务器生成的token，那么调用ta会返回null
      *
      * @param token
      * @return
@@ -58,7 +60,7 @@ public class TokenUtils {
     }
 
     public String getUsernameByToken(String token) {
-        log.info("" + this.getTokenBody(token).get("username"));
+        log.info("用户名：" + this.getTokenBody(token).get("username"));
         return (String) this.getTokenBody(token).get("username");
     }
 
@@ -74,6 +76,6 @@ public class TokenUtils {
     public String refreshToken(String token) {
         Claims claims = this.getTokenBody(token);
         claims.setExpiration(new Date(System.currentTimeMillis() + expiration * 1000));
-        return this.generateToken(claims);
+        return generateToken(claims);
     }
 }

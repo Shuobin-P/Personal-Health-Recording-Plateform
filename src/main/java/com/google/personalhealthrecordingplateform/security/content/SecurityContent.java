@@ -16,5 +16,6 @@ public class SecurityContent {
             "/tool/forget/password",
             "/tool/sms",
             "/goods/batchExport",
+            "/mini/login",
     };
 }

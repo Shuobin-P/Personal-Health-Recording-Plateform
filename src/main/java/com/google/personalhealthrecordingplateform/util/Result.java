@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * @author W&F
+ */
 @Data
 @ApiModel(value = "响应参数")
 public class Result implements Serializable {

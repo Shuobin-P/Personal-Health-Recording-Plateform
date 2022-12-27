@@ -37,18 +37,17 @@ public class SysUserServiceImpl implements SysUserService {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
-    @Value("${jwt.tokenHead}")
-    private String tokenHead;
-
     @Autowired
-    public SysUserServiceImpl(TokenUtils tokenUtils, SysUserMapper sysUserMapper, PasswordEncoder passwordEncoder, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService, RedisUtils redisUtils) {
+    public SysUserServiceImpl(RedisUtils redisUtils, TokenUtils tokenUtils, SysUserMapper sysUserMapper, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
+        this.redisUtils = redisUtils;
         this.tokenUtils = tokenUtils;
         this.sysUserMapper = sysUserMapper;
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
-        this.redisUtils = redisUtils;
     }
 
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
 
     @Transactional(rollbackFor = Throwable.class)
     @Override
@@ -133,7 +132,6 @@ public class SysUserServiceImpl implements SysUserService {
     public Result selectByID(Integer id) {
         return Result.success("找到一条数据", sysUserMapper.selectByID(3));
     }
-
 
     @Override
     public Result login(LoginVO loginVo) {
