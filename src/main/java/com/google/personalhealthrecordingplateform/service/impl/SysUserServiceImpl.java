@@ -38,7 +38,7 @@ public class SysUserServiceImpl implements SysUserService {
     private final UserDetailsService userDetailsService;
 
     @Autowired
-    public SysUserServiceImpl(RedisUtils redisUtils, TokenUtils tokenUtils, SysUserMapper sysUserMapper, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
+    public SysUserServiceImpl(RedisUtils redisUtils, TokenUtils tokenUtils, SysUserMapper sysUserMapper, PasswordEncoder passwordEncoder, @Qualifier("sysUserDetailsServiceImp") UserDetailsService userDetailsService) {
         this.redisUtils = redisUtils;
         this.tokenUtils = tokenUtils;
         this.sysUserMapper = sysUserMapper;
@@ -151,6 +151,8 @@ public class SysUserServiceImpl implements SysUserService {
             String val = (String) redisUtils.get("java_sport:sys_user:phone_number:" + loginVo.getPhoneNumber());
             if (null != val && val.equals(loginVo.getCode())) {
                 userDetails = userDetailsService.loadUserByUsername(this.findUserNameByPhoneNumber(loginVo.getPhoneNumber()));
+                //验证码用完就删掉
+                redisUtils.delete("java_sport:sys_user:phone_number:" + loginVo.getPhoneNumber());
             } else {
                 return Result.fail("验证码已过期，请重新发送");
             }
@@ -163,7 +165,7 @@ public class SysUserServiceImpl implements SysUserService {
                         userDetails.getPassword(),
                         userDetails.getAuthorities()
                 );
-        log.info("在SecurityContextHolder中添加登录者信息");
+        log.info("在SecurityContextHolder中添加登录者信息" + userDetails.getUsername());
 
         //这里完成了身份认证，而且在SecurityContext中加入了authentication对象。为什么后面经过jwt过滤器的时候，SecurityContext中没有authentication对象
         //答：因为当前请求是有A线程处理的，后面再次发送的请求是由B线程处理的，A线程中的SecurityContext和B线程的SecurityContext不相同

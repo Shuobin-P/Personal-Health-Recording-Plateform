@@ -17,13 +17,13 @@ import java.util.List;
  * @author W&F
  */
 @Slf4j
-@Service("userDetailsServiceImp")
-public class UserDetailsServiceImpl implements UserDetailsService {
+@Service("sysUserDetailsServiceImp")
+public class SysUserDetailsServiceImpl implements UserDetailsService {
     private final RedisUtils redisUtils;
     private final SysUserMapper sysUserMapper;
 
     @Autowired
-    public UserDetailsServiceImpl(SysUserMapper sysUserMapper, RedisUtils redisUtils) {
+    public SysUserDetailsServiceImpl(SysUserMapper sysUserMapper, RedisUtils redisUtils) {
         this.sysUserMapper = sysUserMapper;
         this.redisUtils = redisUtils;
     }

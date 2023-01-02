@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private UserDetailsService userDetailsService;
 
     @Autowired
-    public JwtAuthenticationFilter(TokenUtils tokenUtils, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(TokenUtils tokenUtils, @Qualifier("sysUserDetailsServiceImp") UserDetailsService userDetailsService) {
         this.tokenUtils = tokenUtils;
         this.userDetailsService = userDetailsService;
     }
@@ -54,20 +54,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith(tokenHead)) {
             String token = header.substring(tokenHead.length());
             String username = tokenUtils.getUsernameByToken(token);
+            log.info("Authentication是否为空：" + SecurityContextHolder.getContext().getAuthentication());
+            //FIXME 为啥小程序登录找不到之前创建的Authentication，难道是因为自己创建的那个authentication有问题，SpringSecurity管理不了？
+            // 感觉跟SpringSecurity的认真流程有关系。
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (!tokenUtils.isExpired(token)) {
-                    //使用JWT不是就已经能实现用户的登录状态保持吗？为什么还要使用下面这个，
-                    //得到用户的详细信息，为什么保存token到SecurityContext中
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    //就算是后台管理系统，一个用户登录之后，会创建一个authentication，存储到SecurityContext中，
+                    //后面继续发送请求应该不会创建新的authentication，而是找到之前创建的SecurityContext
+                    log.info("根据jwt创建新的authentication");
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     //UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null);
 
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                    logger.info("JWT过滤器完成过滤");
                 }
             }
         }
+        logger.info("JWT过滤器完成过滤");
         filterChain.doFilter(request, response);
     }
 
