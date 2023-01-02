@@ -16,6 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * @author W&F
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -27,6 +30,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+
+
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().mvcMatchers(SecurityContent.WHITE_LIST);
@@ -36,10 +41,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //TODO 为什么要把解决跨域攻击的功能关掉
         http.csrf().disable();
-        //TODO 禁用Session又是啥？SpringSecurity默认是提供了session功能吗？
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        //TODO 不理解
-        //难道login都不能直接访问吗？
+        //禁用Session又是啥？SpringSecurity默认是提供了session功能吗？如果禁用session，用户每次请求都要创建新的SecurityContext，
+        //SecurityContext就不能实现持久化，即复用。
+        //http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests()
                 .anyRequest().authenticated();
         //TODO 不理解
@@ -47,7 +51,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
-
 
 
     @Bean
