@@ -165,7 +165,7 @@ public class SysUserServiceImpl implements SysUserService {
                         userDetails.getPassword(),
                         userDetails.getAuthorities()
                 );
-        log.info("在SecurityContextHolder中添加登录者信息" + userDetails.getUsername());
+        log.info("在SecurityContextHolder中添加authentication信息" + userDetails.getUsername());
 
         //这里完成了身份认证，而且在SecurityContext中加入了authentication对象。为什么后面经过jwt过滤器的时候，SecurityContext中没有authentication对象
         //答：因为当前请求是有A线程处理的，后面再次发送的请求是由B线程处理的，A线程中的SecurityContext和B线程的SecurityContext不相同

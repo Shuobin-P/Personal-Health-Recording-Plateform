@@ -41,8 +41,9 @@ public class MiniController {
     public Result getWeRunStep(@RequestParam String encryptedData, String iv) {
         //TODO 用up原来的后端就可以正常运行，但是使用我的后端代码却不能正常运行，根据前端调用的接口，应该是因为这个接口没写
         //前端发送加密后的数据过来，后端使用session_key解密返回给小程序。
-        //TODO 这个用户的session_key存放在哪里？我打算存放在SecurityContextHolder Authentication中
-        return null;
+        //TODO 返回的数据格式是什么样子的？这个接口具体是干什么的？
+        //JWT过滤器那边依然会处理JWT，查找Authentication
+        return Result.success("成功查询微信步数", 654);
     }
 
     @ApiOperation(value = "微信小程序退出登录接口")

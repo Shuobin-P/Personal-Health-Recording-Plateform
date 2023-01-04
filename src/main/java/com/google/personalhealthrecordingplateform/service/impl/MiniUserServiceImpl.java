@@ -3,6 +3,7 @@ package com.google.personalhealthrecordingplateform.service.impl;
 import com.google.personalhealthrecordingplateform.common.MiniOpenIDAuthentication;
 import com.google.personalhealthrecordingplateform.service.MiniUserService;
 import com.google.personalhealthrecordingplateform.util.HttpUtils;
+import com.google.personalhealthrecordingplateform.util.RedisUtils;
 import com.google.personalhealthrecordingplateform.util.Result;
 import com.google.personalhealthrecordingplateform.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -42,12 +43,14 @@ public class MiniUserServiceImpl implements MiniUserService {
     private String tokenHead;
 
     private final TokenUtils tokenUtils;
+    private final RedisUtils redisUtils;
 
     private final UserDetailsService userDetailsService;
 
     @Autowired
-    public MiniUserServiceImpl(TokenUtils tokenUtils, @Qualifier("miniUserDetailsServiceImp") UserDetailsService userDetailsService) {
+    public MiniUserServiceImpl(TokenUtils tokenUtils, RedisUtils redisUtils, @Qualifier("miniUserDetailsServiceImp") UserDetailsService userDetailsService) {
         this.tokenUtils = tokenUtils;
+        this.redisUtils = redisUtils;
         this.userDetailsService = userDetailsService;
     }
 
@@ -58,7 +61,6 @@ public class MiniUserServiceImpl implements MiniUserService {
         String openid;
         //会话密钥
         String session_key;
-        UserDetails userDetails;
         CloseableHttpResponse response = null;
         Map<String, Object> responsePairMap;
         List<NameValuePair> list = new ArrayList<>();
@@ -91,16 +93,8 @@ public class MiniUserServiceImpl implements MiniUserService {
             log.info("错误信息：" + responsePairMap.get("errmsg"));
             return Result.fail("登录失败" + responsePairMap.get("errmsg"));
         }
-        userDetails = userDetailsService.loadUserByUsername(openid);
-        //TODO 这里使用什么类型的authentication取决于登录的方式，如果登录方式选择username password就选择usernamePasswordAuthenticationToken
-        // 选择不同类型的authentication肯定是有区别的，搞清楚微信小程序这种方式是属于哪种登录方式? OAuth2.0
-        //FIXME SpringSecurity好像不支持这种authentication
         //FIXME 其实可以使用redis来保存这个session_key，因为那个JWT中不是保存了open_id麻？正好是一个键值对，保存到redis里面
-        Authentication authentication = new MiniOpenIDAuthentication(userDetails, null, session_key);
-        //后台管理系统也是直接这样放进去的，但是小程序这边就不能使用了，就是因为自己这个authentication有问题吧。
-        //TODO 研究一下setAuthentication()吧
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.info("为小程序用户创建authentication,open_id= " + userDetails.getUsername());
+        redisUtils.add("personal_health_recording_plateform:mini_user:open_id:" + openid, session_key);
         Map<String, Object> map = new HashMap<>();
         map.put("username", openid);
         map.put("created", new Date());

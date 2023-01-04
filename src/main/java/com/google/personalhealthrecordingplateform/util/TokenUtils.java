@@ -74,8 +74,19 @@ public class TokenUtils {
      * @return 重新生成的token
      */
     public String refreshToken(String token) {
+        log.info("token过期，生成新的token");
         Claims claims = this.getTokenBody(token);
         claims.setExpiration(new Date(System.currentTimeMillis() + expiration * 1000));
         return generateToken(claims);
+    }
+
+    /**
+     * 判断该token是否是本服务器生成的
+     *
+     * @param token JWT
+     * @return
+     */
+    public boolean isLegal(String token) {
+        return this.getTokenBody(token) == null ? false : true;
     }
 }
