@@ -63,7 +63,7 @@ public class RedisUtils {
     }
 
     /**
-     * 删除key对应的记录
+     * 同步删除小key
      *
      * @param key Redis Key
      */

@@ -53,25 +53,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //要么创建SecurityContext，要么拿之前被存储到个地方的SecurityContext
         if (header != null && header.startsWith(tokenHead)) {
             String token = header.substring(tokenHead.length());
-            String username = tokenUtils.getUsernameByToken(token);
-            log.info("Authentication是否为空：" + SecurityContextHolder.getContext().getAuthentication());
-            //FIXME 为啥小程序登录找不到之前创建的Authentication，难道是因为自己创建的那个authentication有问题，SpringSecurity管理不了？
-            // 感觉跟SpringSecurity的认真流程有关系。
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if (!tokenUtils.isExpired(token)) {
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                    //就算是后台管理系统，一个用户登录之后，会创建一个authentication，存储到SecurityContext中，
-                    //后面继续发送请求应该不会创建新的authentication，而是找到之前创建的SecurityContext
-                    log.info("根据jwt创建新的authentication");
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    //UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null);
-
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            //FIXME 创建JWT的时候创建了authentication，按道理这里应该可以访问到authentication
+            // 但是实际上，并没有啊。SpringSecurity不是会对SecurityContext进行持久化吗？不就意味着其中的authentication也会持久化。
+            // 疑问：是不是登录的时候，如果账号密码正确，根本就不要创建authentication，而是在同一个客户端再次进行访问的时候，SecurityContextHolder.getContext().getAuthentication()为空
+            // 才创建authentication，才能持久化处理？
+            // 官方文档好像没给例子或者说清楚这个事情吧。官方文档如果由案例，我真的想拿它的试一下。
+            // 当初就是发现了这个up的代码有点不对劲，但是想着快点写完这个项目，但是到了后面越来越感觉这个up主在乱搞，就想自己改代码，但是
+            // 我不知道这一改，前面的实现包括鉴权可能都要改。
+            // 最恐怖的是前端vue代码可能也要改。
+            // 选择继续自己改代码还是按照这个up主的写。
+            log.info("当前线程的SecurityContext是否为空：" + SecurityContextHolder.getContext());
+            log.info("当前线程的Authentication是否为空：" + SecurityContextHolder.getContext().getAuthentication());
+            if (tokenUtils.isLegal(token)) {
+                if (tokenUtils.isExpired(token)) {
+                    //因为如果JWT过期了，后端肯定要重新生成JWT，后面发送响应的话，jwt会包含在response
+                    request.setAttribute(tokenHeader, tokenHead + tokenUtils.refreshToken(token));
+                } else {
+                    //JWT没过期的话如何处理？
+                    log.info("JWT没有过期");
                 }
             }
+
         }
         logger.info("JWT过滤器完成过滤");
+        //若JWT的身份认证失败或者没有包含JWT请求，则把请求往下传
         filterChain.doFilter(request, response);
     }
 
