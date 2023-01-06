@@ -2,6 +2,7 @@ package com.google.personalhealthrecordingplateform.service.impl;
 
 import com.google.personalhealthrecordingplateform.service.MiniUserService;
 import com.google.personalhealthrecordingplateform.util.HttpUtils;
+import com.google.personalhealthrecordingplateform.util.RedisUtils;
 import com.google.personalhealthrecordingplateform.util.Result;
 import com.google.personalhealthrecordingplateform.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,10 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -33,13 +37,17 @@ public class MiniUserServiceImpl implements MiniUserService {
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-
     private final TokenUtils tokenUtils;
+    private final RedisUtils redisUtils;
+    private UserDetailsService userDetailsService;
 
     @Autowired
-    public MiniUserServiceImpl(TokenUtils tokenUtils) {
+    public MiniUserServiceImpl(TokenUtils tokenUtils, RedisUtils redisUtils, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
         this.tokenUtils = tokenUtils;
+        this.redisUtils = redisUtils;
+        this.userDetailsService = userDetailsService;
     }
+
 
     @Override
     public Result login(String code) throws IOException {
@@ -47,6 +55,7 @@ public class MiniUserServiceImpl implements MiniUserService {
         String openid;
         //会话密钥
         String session_key;
+        UserDetails userDetails;
         CloseableHttpResponse response = null;
         Map<String, Object> responsePairMap;
         List<NameValuePair> list = new ArrayList<>();
@@ -81,14 +90,18 @@ public class MiniUserServiceImpl implements MiniUserService {
         }
         //现在我服务器拿到了用户的openid，就可以生成jwt了，但是这个session_key似乎没啥作用。
         //后序前端访问我这个服务器的时候，携带jwt就可以了，session_key似乎还是没有作用，
+        userDetails = userDetailsService.loadUserByUsername(openid);
+        redisUtils.add("java_sport:sys_user:open_id:" + openid, session_key);
         Map<String, Object> map = new HashMap<>();
         map.put("username", openid);
         map.put("created", new Date());
         String token = tokenUtils.generateToken(map);
         log.info("小程序JWT:" + token);
-        Map<String, String> tokenMap = new HashMap<>(2);
+        Map<String, Object> tokenMap = new HashMap<>(2);
         tokenMap.put("tokenHead", tokenHead);
         tokenMap.put("token", token);
+        tokenMap.put("openid", openid);
+        tokenMap.put("userInfo", userDetails);
         return Result.success("小程序用户登录成功", tokenMap);
     }
 }
