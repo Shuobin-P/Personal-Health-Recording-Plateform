@@ -37,9 +37,11 @@ public class MiniController {
         return miniUserService.login(code);
     }
 
-    @PostMapping("/wxrun")
-    public Result getRunStep(@RequestBody String encryptedData, String iv) {
-        return null;
+    @GetMapping("/wxrun")
+    public Result getRunStep(@RequestParam String encryptedData, String iv) {
+        //同样的前端（我更改以后的小程序），后端不一样，而且up的后端这个方法的post并没有实现，
+        //所以不是这个方法的原因
+        return Result.success("成功查询到微信步数", 456);
     }
 
     @ApiOperation(value = "微信小程序退出登录接口")
