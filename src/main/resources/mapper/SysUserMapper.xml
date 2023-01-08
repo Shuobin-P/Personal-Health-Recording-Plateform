@@ -109,6 +109,28 @@
         WHERE id = #{id}
     </update>
 
+    <update id="updateInfoByOpenId" parameterType="SysUser">
+        UPDATE sys_user
+        <set>
+            <if test="nickName != null">
+                nick_name = #{nickName},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="phoneNumber != null">
+                phone_number = #{phoneNumber},
+            </if>
+        </set>
+        WHERE open_id=#{openId}
+    </update>
+
     <select id="findAll" resultType="SysUser">
         select *
         from sys_user;

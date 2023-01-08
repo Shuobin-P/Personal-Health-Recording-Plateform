@@ -1,5 +1,6 @@
 package com.google.personalhealthrecordingplateform.controller;
 
+import com.google.personalhealthrecordingplateform.entity.SysUser;
 import com.google.personalhealthrecordingplateform.service.MiniUserService;
 import com.google.personalhealthrecordingplateform.util.Result;
 import io.swagger.annotations.Api;
@@ -38,10 +39,11 @@ public class MiniController {
     }
 
     @GetMapping("/wxrun")
-    public Result getRunStep(@RequestParam String encryptedData, String iv) {
-        //同样的前端（我更改以后的小程序），后端不一样，而且up的后端这个方法的post并没有实现，
-        //所以不是这个方法的原因
-        return Result.success("成功查询到微信步数", 456);
+    public Result getSteps(@RequestParam String encryptedData, String iv) {
+        //TODO 包含用户过去30天的步数
+        //那为什么这里只返回一条数据。
+        log.info("从微信获得加密数据：" + encryptedData);
+        return miniUserService.getSteps(encryptedData, iv);
     }
 
     @ApiOperation(value = "微信小程序退出登录接口")
@@ -50,4 +52,11 @@ public class MiniController {
         log.info("进入微信小程序退出登录接口");
         return null;
     }
+
+    @ApiOperation(value = "更新用户信息")
+    @PostMapping("/update/info")
+    public Result updateInfo(@RequestBody SysUser sysUser) {
+        return miniUserService.updateInfoByOpenId(sysUser);
+    }
+
 }

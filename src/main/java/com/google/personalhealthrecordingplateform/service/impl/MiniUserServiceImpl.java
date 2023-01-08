@@ -1,10 +1,9 @@
 package com.google.personalhealthrecordingplateform.service.impl;
 
+import com.google.personalhealthrecordingplateform.entity.SysUser;
+import com.google.personalhealthrecordingplateform.mapper.SysUserMapper;
 import com.google.personalhealthrecordingplateform.service.MiniUserService;
-import com.google.personalhealthrecordingplateform.util.HttpUtils;
-import com.google.personalhealthrecordingplateform.util.RedisUtils;
-import com.google.personalhealthrecordingplateform.util.Result;
-import com.google.personalhealthrecordingplateform.util.TokenUtils;
+import com.google.personalhealthrecordingplateform.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -39,12 +39,14 @@ public class MiniUserServiceImpl implements MiniUserService {
     private String tokenHead;
     private final TokenUtils tokenUtils;
     private final RedisUtils redisUtils;
-    private UserDetailsService userDetailsService;
+    private final SysUserMapper sysUserMapper;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    public MiniUserServiceImpl(TokenUtils tokenUtils, RedisUtils redisUtils, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
+    public MiniUserServiceImpl(TokenUtils tokenUtils, RedisUtils redisUtils, SysUserMapper sysUserMapper, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
         this.tokenUtils = tokenUtils;
         this.redisUtils = redisUtils;
+        this.sysUserMapper = sysUserMapper;
         this.userDetailsService = userDetailsService;
     }
 
@@ -104,4 +106,22 @@ public class MiniUserServiceImpl implements MiniUserService {
         tokenMap.put("userInfo", userDetails);
         return Result.success("小程序用户登录成功", tokenMap);
     }
+
+    @Override
+    public Result getSteps(String encryptedData, String iv) {
+        return Result.success("获取步数成功", 4565);
+    }
+
+    @Transactional(rollbackFor = Throwable.class)
+    @Override
+    public Result updateInfoByOpenId(SysUser sysUser) {
+        if (StringUtils.isEmpty(sysUser.getOpenId())) {
+            return Result.fail("请传递小程序用户唯一标识open_id");
+        }
+        redisUtils.delete("java_sport:sys_user:" + sysUser.getOpenId());
+        sysUserMapper.updateInfoByOpenId(sysUser);
+        return Result.success("成功更新用户信息");
+    }
+
+
 }
