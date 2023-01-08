@@ -26,6 +26,8 @@ public class SysUser implements UserDetails {
     private String nickName;
     @ApiModelProperty(value = "性别")
     private Byte sex;
+    @ApiModelProperty(value = "微信小程序用户唯一ID")
+    private String openId;
     @ApiModelProperty(value = "微信获取用户头像")
     private String avatar;
     @ApiModelProperty(value = "微信获取用户地址")

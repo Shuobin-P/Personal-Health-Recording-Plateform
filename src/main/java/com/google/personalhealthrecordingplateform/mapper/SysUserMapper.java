@@ -51,6 +51,8 @@ public interface SysUserMapper {
      */
     void update(SysUser sysUser);
 
+    void updateInfoByOpenId(SysUser user);
+
     List<SysUser> findAll();
 
     SysUser selectByID(Integer userID);
