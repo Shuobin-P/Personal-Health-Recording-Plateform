@@ -1,5 +1,6 @@
 package com.google.personalhealthrecordingplateform.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.google.personalhealthrecordingplateform.entity.Food;
 import com.google.personalhealthrecordingplateform.entity.FoodType;
@@ -24,6 +25,8 @@ public interface FoodService {
 
     void update(Food food);
 
+    Food findFoodInfoById(Long id);
+
     /**
      * 查询到所有类型的食物
      *
@@ -44,6 +47,8 @@ public interface FoodService {
      * @return
      */
     Page<Food> findFoodPage(String queryString);
+
+    Page<Food> findMiniFoodPage(Long typeId, String queryString);
 
     void insertFoodType(FoodType foodType);
 

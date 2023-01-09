@@ -1,5 +1,6 @@
 package com.google.personalhealthrecordingplateform.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.google.personalhealthrecordingplateform.dto.FoodExcelDTO;
 import com.google.personalhealthrecordingplateform.entity.Food;
@@ -59,6 +60,12 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
+    public Food findFoodInfoById(Long id) {
+        return foodMapper.findFoodInfoById(id);
+    }
+
+
+    @Override
     public List<FoodType> getAllFoodType() {
         return foodTypeMapper.getAllFoodType();
     }
@@ -72,6 +79,13 @@ public class FoodServiceImpl implements FoodService {
     public Page<Food> findFoodPage(String queryString) {
         return foodMapper.findFoodPage(queryString);
     }
+
+
+    @Override
+    public Page<Food> findMiniFoodPage(Long typeId, String queryString) {
+        return foodMapper.findMiniFoodPage(typeId, queryString);
+    }
+
 
     @Transactional(rollbackFor = Throwable.class)
     @Override

@@ -50,4 +50,9 @@ public class SportNewsServiceImpl implements SportNewsService {
     public Page<SportNews> findPage(String queryInfo) {
         return sportNewsMapper.findPage(queryInfo);
     }
+
+    @Override
+    public SportNews findSportNewsRecord(Long id) {
+        return sportNewsMapper.findSportNewsRecord(id);
+    }
 }

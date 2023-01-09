@@ -38,4 +38,12 @@ public interface SportNewsService {
      * @return
      */
     Page<SportNews> findPage(String queryString);
+
+    /**
+     * 根据数据库记录的id查找完整的资讯信息
+     *
+     * @param id
+     * @return
+     */
+    SportNews findSportNewsRecord(Long id);
 }

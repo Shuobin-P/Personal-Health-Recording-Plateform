@@ -72,4 +72,10 @@ public class SportNewsController {
         Page<SportNews> page = sportNewsService.findPage(queryInfo.getQueryString());
         return PageResult.pageResult(page.getTotal(), page.getResult());
     }
+
+    @ApiOperation(value = "获取详细信息")
+    @GetMapping("/{id}")
+    public Result findSportNewsRecord(@PathVariable Long id) {
+        return Result.success("成功查询到id为" + id + "的运动资讯", sportNewsService.findSportNewsRecord(id));
+    }
 }

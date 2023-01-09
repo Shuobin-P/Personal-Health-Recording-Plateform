@@ -150,11 +150,26 @@
         WHERE id = #{id}
     </update>
 
+    <select id="findFoodInfoById" resultMap="mainMap" parameterType="Long">
+        SELECT *
+        FROM food
+        WHERE id = #{id}
+    </select>
+
     <select id="findFoodPage" parameterType="java.lang.String" resultMap="mainMap">
         SELECT * FROM food
         <if test="queryString != null and queryString.length > 0">
             WHERE title LIKE concat('%', #{queryString}, '%')
         </if>
     </select>
+
+    <select id="findMiniFoodPage" resultMap="mainMap">
+        SELECT * FROM food
+        WHERE type_id = #{typeId}
+        <if test="queryString != null and queryString.length > 0">
+            AND title LIKE concat('%', #{queryString}, '%')
+        </if>
+    </select>
+
 
 </mapper>
