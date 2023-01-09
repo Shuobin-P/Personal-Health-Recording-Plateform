@@ -41,9 +41,15 @@ public interface FoodMapper {
      */
     void update(Food food);
 
+    Food findFoodInfoById(Long id);
+
     /**
+     * 查询食物
+     *
      * @param queryString
      * @return
      */
     Page<Food> findFoodPage(String queryString);
+
+    Page<Food> findMiniFoodPage(Long typeId, String queryString);
 }

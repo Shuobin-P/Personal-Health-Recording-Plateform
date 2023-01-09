@@ -45,4 +45,10 @@
             and (title like concat('%', #{queryString}, '%') or content like concat('%', #{queryString}, '%'))
         </if>
     </select>
+
+    <select id="findSportNewsRecord" resultType="SportNews">
+        SELECT *
+        FROM sport_news
+        WHERE id = #{id}
+    </select>
 </mapper>

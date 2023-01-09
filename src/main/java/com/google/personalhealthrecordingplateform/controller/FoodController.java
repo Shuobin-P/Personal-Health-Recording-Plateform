@@ -1,5 +1,6 @@
 package com.google.personalhealthrecordingplateform.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.personalhealthrecordingplateform.entity.Food;
@@ -15,14 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 /**
  * @author W&F
  * @version 1.0
  * @date 2022/12/7 15:34
  */
-@RequestMapping("/food")
-@RestController
 @Slf4j
+@RestController
+@RequestMapping("/food")
 public class FoodController {
     private final FoodService foodService;
 
@@ -84,6 +86,19 @@ public class FoodController {
         log.info("进入食物分页查询");
         PageHelper.startPage(queryInfo.getPageNumber(), queryInfo.getPageSize());
         Page<Food> page = foodService.findFoodPage(queryInfo.getQueryString());
+        return PageResult.pageResult(page.getTotal(), page.getResult());
+    }
+
+    @GetMapping("/{id}")
+    public Result findMiniFoodInfo(@PathVariable Long id) {
+        return Result.success("成功查询到食物信息", foodService.findFoodInfoById(id));
+    }
+
+    @ApiOperation(value = "小程序分页查询食物列表")
+    @PostMapping("/mini/findPage")
+    public Result findMiniFoodPage(@RequestBody JSONObject object) {
+        PageHelper.startPage((Integer) object.get("pageNumber"), (Integer) object.get("pageSize"));
+        Page<Food> page = foodService.findMiniFoodPage(Long.parseLong((String) object.get("typeId")), (String) object.get("keywords"));
         return PageResult.pageResult(page.getTotal(), page.getResult());
     }
 

@@ -39,4 +39,12 @@ public interface SportNewsMapper {
      * @return
      */
     Page<SportNews> findPage(String queryString);
+
+    /**
+     * 查询运动资讯信息
+     *
+     * @param id
+     * @return
+     */
+    SportNews findSportNewsRecord(Long id);
 }
