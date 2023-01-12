@@ -41,6 +41,11 @@ public class SportServiceImpl implements SportService {
     }
 
     @Override
+    public Sport findExplicitSportInfo(Long id) {
+        return sportMapper.findExplicitSportInfo(id);
+    }
+
+    @Override
     public Page<Sport> findPage(String queryString) {
         return sportMapper.findPage(queryString);
     }

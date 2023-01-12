@@ -32,6 +32,8 @@ public interface SportMapper {
      */
     void update(Sport sportNews);
 
+    Sport findExplicitSportInfo(Long id);
+
     /**
      * 分页查询
      *

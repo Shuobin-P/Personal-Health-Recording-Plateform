@@ -31,6 +31,14 @@ public interface SportService {
     void update(Sport sport);
 
     /**
+     * 查找运动项目详细内容
+     *
+     * @param id
+     * @return
+     */
+    Sport findExplicitSportInfo(Long id);
+
+    /**
      * 分页查询
      *
      * @param queryString

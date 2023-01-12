@@ -59,6 +59,11 @@ public class SportsController {
         return Result.success("成功修改运动项目");
     }
 
+    @GetMapping("/{id}")
+    public Result findExplicitSportInfo(@PathVariable Long id) {
+        return Result.success("成功查询运动信息", sportService.findExplicitSportInfo(id));
+    }
+
     @ApiOperation(value = "分页查询运动项目信息", httpMethod = "POST")
     @PostMapping("/findPage")
     Result findPage(@RequestBody QueryInfo queryInfo) {
