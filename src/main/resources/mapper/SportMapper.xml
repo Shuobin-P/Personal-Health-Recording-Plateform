@@ -38,6 +38,11 @@
         WHERE id = #{id}
     </update>
 
+    <select id="findExplicitSportInfo" resultType="Sport" parameterType="Long">
+        SELECT *
+        FROM sport
+        WHERE id = #{id}
+    </select>
     <select id="findPage" parameterType="String" resultMap="mainMap">
         SELECT * FROM sport
         <if test="queryString != null and queryString.length > 0">
