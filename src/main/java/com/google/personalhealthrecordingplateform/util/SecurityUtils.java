@@ -25,4 +25,8 @@ public class SecurityUtils {
     public static Long getUserId() {
         return getUserInfo().getId();
     }
+
+    public static String getOpenID() {
+        return getUserInfo().getOpenId();
+    }
 }

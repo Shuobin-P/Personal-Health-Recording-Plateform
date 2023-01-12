@@ -2,6 +2,7 @@ package com.google.personalhealthrecordingplateform.controller;
 
 import com.google.personalhealthrecordingplateform.entity.SysUser;
 import com.google.personalhealthrecordingplateform.service.MiniUserService;
+import com.google.personalhealthrecordingplateform.util.MiniEncryptedData;
 import com.google.personalhealthrecordingplateform.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,19 +39,29 @@ public class MiniController {
         return miniUserService.login(code);
     }
 
-    @GetMapping("/wxrun")
-    public Result getSteps(@RequestParam String encryptedData, String iv) {
-        //TODO 包含用户过去30天的步数
-        //那为什么这里只返回一条数据。
-        log.info("从微信获得加密数据：" + encryptedData);
-        return miniUserService.getSteps(encryptedData, iv);
+    @ApiOperation(value = "返回今天的步数")
+    @PostMapping("/wxrun")
+    public Result getTodaySteps(@RequestBody MiniEncryptedData encryptedData) {
+        //获得30天的数据，然后只返回今天的步数
+        log.info("从微信获得加密数据：" + encryptedData.getEncryptedData());
+        log.info("Authorization: " + encryptedData.getOpenid());
+        return miniUserService.getTodaySteps(encryptedData.getEncryptedData(), encryptedData.getIv(), encryptedData.getOpenid());
+    }
+
+    @GetMapping("/step/report")
+    public Result getRecentFourWeeksSteps(@RequestHeader String Authorization) {
+        //统计最近四周的步数数据，今天这一周算第一周，又叫week1
+        //星期一的数据：命名为0
+        //星期二的数据：命名为1
+        //上一周的数据：命名为week2
+        return miniUserService.getRecentFourWeeksSteps(Authorization);
     }
 
     @ApiOperation(value = "微信小程序退出登录接口")
     @GetMapping("/logout")
-    public Result logout() {
+    public Result logout(@RequestHeader String Authorization) {
         log.info("进入微信小程序退出登录接口");
-        return null;
+        return miniUserService.logout(Authorization);
     }
 
     @ApiOperation(value = "更新用户信息")

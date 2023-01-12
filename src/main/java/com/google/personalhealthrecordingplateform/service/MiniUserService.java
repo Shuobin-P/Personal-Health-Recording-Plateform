@@ -27,13 +27,18 @@ public interface MiniUserService {
     Result login(String code) throws URISyntaxException, IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
     /**
-     * 获得步数
+     * 退出登录
      *
-     * @param encryptedData
-     * @param iv
+     * @param authorizationHeaderVal Authorization Header的值
      * @return
      */
-    Result getSteps(String encryptedData, String iv);
+    Result logout(String authorizationHeaderVal);
+
+
+    Result getTodaySteps(String encryptedData, String iv, String openId);
+
+
+    Result getRecentFourWeeksSteps(String authorizationHeaderVal);
 
 
     /**

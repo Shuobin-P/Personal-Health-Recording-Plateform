@@ -21,9 +21,15 @@ public class TokenUtils {
     @Value("${jwt.secret}")
     private String secret;
 
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
+
     @Value("${jwt.expiration}")
     private long expiration;
 
+    public String extractToken(String authorizationHeaderVal) {
+        return authorizationHeaderVal.substring(tokenHead.length());
+    }
 
     public String generateToken(UserDetails userDetails) {
         log.info("生成token");

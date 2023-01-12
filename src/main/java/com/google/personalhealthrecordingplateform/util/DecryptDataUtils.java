@@ -1,8 +1,10 @@
 package com.google.personalhealthrecordingplateform.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.encoders.Base64;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -15,6 +17,8 @@ import java.security.Security;
  * @version 1.0
  * @date 2023/1/6 18:08
  */
+@Slf4j
+@Component
 public class DecryptDataUtils {
     private static final String KEY_ALGORITHM = "AES";
     private static final String ALGORITHM_STR = "AES/CBC/PKCS7Padding";
@@ -22,6 +26,7 @@ public class DecryptDataUtils {
     private static Cipher cipher;
 
     public String decryptData(String encryptData, String sessionKey, String iv) {
+        log.info("sessionkey: " + sessionKey);
         return new String(
                 decryptOfDiyIV(Base64.decode(encryptData),
                         Base64.decode(sessionKey),
