@@ -1,7 +1,11 @@
 package com.google.personalhealthrecordingplateform.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.personalhealthrecordingplateform.entity.SysUser;
+import com.google.personalhealthrecordingplateform.entity.WxRun;
 import com.google.personalhealthrecordingplateform.mapper.SysUserMapper;
+import com.google.personalhealthrecordingplateform.mapper.WxRunMapper;
 import com.google.personalhealthrecordingplateform.service.MiniUserService;
 import com.google.personalhealthrecordingplateform.util.*;
 import lombok.extern.slf4j.Slf4j;
@@ -39,13 +43,19 @@ public class MiniUserServiceImpl implements MiniUserService {
     private String tokenHead;
     private final TokenUtils tokenUtils;
     private final RedisUtils redisUtils;
+    private final DateUtils dateUtils;
+    private final DecryptDataUtils decryptDataUtils;
+    private final WxRunMapper wxRunMapper;
     private final SysUserMapper sysUserMapper;
     private final UserDetailsService userDetailsService;
 
     @Autowired
-    public MiniUserServiceImpl(TokenUtils tokenUtils, RedisUtils redisUtils, SysUserMapper sysUserMapper, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
+    public MiniUserServiceImpl(TokenUtils tokenUtils, RedisUtils redisUtils, DateUtils dateUtils, DecryptDataUtils decryptDataUtils, WxRunMapper wxRunMapper, SysUserMapper sysUserMapper, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
         this.tokenUtils = tokenUtils;
         this.redisUtils = redisUtils;
+        this.dateUtils = dateUtils;
+        this.decryptDataUtils = decryptDataUtils;
+        this.wxRunMapper = wxRunMapper;
         this.sysUserMapper = sysUserMapper;
         this.userDetailsService = userDetailsService;
     }
@@ -108,8 +118,77 @@ public class MiniUserServiceImpl implements MiniUserService {
     }
 
     @Override
-    public Result getSteps(String encryptedData, String iv) {
-        return Result.success("获取步数成功", 4565);
+    public Result logout(String authorizationHeaderVal) {
+        String token = tokenUtils.extractToken(authorizationHeaderVal);
+        try {
+            redisUtils.delete("java_sport:sys_user:open_id:" + tokenUtils.getTokenBody(token).get("open_id"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail("退出登录失败");
+        }
+        return Result.success("成功退出登录");
+    }
+
+    @Transactional(rollbackFor = Throwable.class)
+    @Override
+    public Result getTodaySteps(String encryptedData, String iv, String openId) {
+        String stepsData = decryptDataUtils.decryptData(encryptedData, (String) redisUtils.get("java_sport:sys_user:open_id:" + openId), iv);
+        JSONObject result = JSONObject.parseObject(stepsData);
+        JSONArray stepInfoList = result.getJSONArray("stepInfoList");
+        List<WxRun> steps = new ArrayList<>();
+        for (Object o : stepInfoList) {
+            JSONObject obj = (JSONObject) o;
+            Long timestamp = obj.getLong("timestamp");
+            WxRun step = new WxRun(openId, dateUtils.transformTimestampToDate(timestamp), obj.getInteger("step"));
+            steps.add(step);
+        }
+        //遍历steps，若数据库中，有该记录，则更新，否则，放入temp，最后Mybatis批量插入
+        List<WxRun> temp = new ArrayList<>();
+        for (WxRun e : steps) {
+            WxRun wxStep = wxRunMapper.find(e.getOpenid(), e.getTime());
+            if (wxStep != null) {
+                wxRunMapper.update(e);
+            } else {
+                temp.add(e);
+            }
+        }
+        //FIXME 为什么不能批量插入 wxRunMapper.batchInsert(temp);
+        temp.stream().forEach(e -> wxRunMapper.insert(e));
+        return Result.success("获取今日步数", steps.get(steps.size() - 1).getStep());
+    }
+
+    @Override
+    public Result getRecentFourWeeksSteps(String authorizationHeaderVal) {
+        Map<String, List<WxRun>> map = new HashMap<>(4);
+        //本周的数据
+        String openID = tokenUtils.getUsernameByToken(tokenUtils.extractToken(authorizationHeaderVal));
+        int days = dateUtils.getDayIndexOfWeek(new Date());
+        List<WxRun> thisWeekSteps = new ArrayList<>();
+        for (int i = days - 1; i >= 0; i--) {
+            String date = dateUtils.parseDate(dateUtils.getDateBeforeORAfterToday(-i), "yyyy-MM-dd");
+            WxRun wxStep = wxRunMapper.find(openID, date);
+            thisWeekSteps.add(wxStep);
+            if (wxStep == null) {
+                System.out.println("微信步数为空");
+            }
+            System.out.println("openID: " + openID + "Date: " + date + "Steps: ");
+        }
+        map.put("week1", thisWeekSteps);
+        //前面三周的数据
+        Date lastSunday = dateUtils.getDateBeforeORAfterToday(-days);
+        for (int i = 1; i <= 3; i++) {
+            List<WxRun> list = new ArrayList<>();
+            for (int j = 6; j >= 0; j--) {
+                String date = dateUtils.parseDate(
+                        dateUtils.getDateBeforeORAfterSpecificDate(lastSunday, -j), "yyyy-MM-dd");
+                WxRun wxStep = wxRunMapper.find(openID, date);
+                list.add(wxStep);
+            }
+            //lastSunday的上一个Sunday
+            lastSunday = dateUtils.getDateBeforeORAfterSpecificDate(lastSunday, -7);
+            map.put("week" + (i + 1), list);
+        }
+        return Result.success("最近四周的数据", map);
     }
 
     @Transactional(rollbackFor = Throwable.class)

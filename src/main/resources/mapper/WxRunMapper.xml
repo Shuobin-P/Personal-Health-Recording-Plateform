@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.personalhealthrecordingplateform.mapper.WxRunMapper">
+    <select id="find" resultType="WxRun" parameterType="String">
+        SELECT *
+        FROM wx_run
+        WHERE openid = #{openID}
+          AND `time` = #{date}
+    </select>
+
+    <update id="update" parameterType="WxRun">
+        UPDATE wx_run
+        SET step = #{step}
+        WHERE openid = #{openid}
+          AND `time` = #{time}
+    </update>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO wx_run (openid,`time`,step) VALUES
+        <foreach collection="list" separator="," item="item">
+            (
+            null,#{item.openid},#{item.time},#{item.step}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="insert">
+        INSERT INTO wx_run (openid, `time`, step)
+        VALUES (#{openid}, #{time}, #{step})
+    </insert>
+</mapper>

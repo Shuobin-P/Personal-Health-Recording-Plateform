@@ -32,6 +32,7 @@ public class SysUser implements UserDetails {
     private String avatar;
     @ApiModelProperty(value = "微信获取用户地址")
     private String address;
+
     @ApiModelProperty(value = "微信小程序用户唯一标识")
     private String openID;
     @ApiModelProperty(value = "邮箱")

@@ -46,13 +46,15 @@
         INSERT INTO food
         VALUES
         <foreach collection="list" separator="," item="item">
-            (null,#{item.title}, #{item.typeId}, #{item.imageUrls}, #{item.nutrient},
+            (
+             null,#{item.title}, #{item.typeId}, #{item.imageUrls}, #{item.nutrient},
             #{item.heat}, #{item.protein}, #{item.fat}, #{item.carbonWater},
             #{item.dietaryFiber}, #{item.vitaminA},
             #{item.vitaminC}, #{item.vitaminE}, #{item.carrot}, #{item.vitaminB1},
             #{item.vitaminB2}, #{item.niacin}, #{item.cholesterol},
             #{item.magnesium}, #{item.iron}, #{item.calcium},#{item.zinc}, #{item.copper},
-            #{item.manganese}, #{item.potassium}, #{item.phosphorus}, #{item.sodium}, #{item.selenium})
+            #{item.manganese}, #{item.potassium}, #{item.phosphorus}, #{item.sodium}, #{item.selenium}
+            )
         </foreach>
     </insert>
 

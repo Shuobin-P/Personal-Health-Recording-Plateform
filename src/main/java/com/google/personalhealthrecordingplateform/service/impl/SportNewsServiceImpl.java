@@ -17,10 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class SportNewsServiceImpl implements SportNewsService {
+    private final DateUtils dateUtils;
     private final SportNewsMapper sportNewsMapper;
 
     @Autowired
-    public SportNewsServiceImpl(SportNewsMapper sportNewsMapper) {
+    public SportNewsServiceImpl(DateUtils dateUtils, SportNewsMapper sportNewsMapper) {
+        this.dateUtils = dateUtils;
         this.sportNewsMapper = sportNewsMapper;
     }
 
@@ -28,7 +30,7 @@ public class SportNewsServiceImpl implements SportNewsService {
     @Override
     public void insert(SportNews sportNews) {
         sportNews.setCreateName(SecurityUtils.getUsername());
-        sportNews.setCreateTime(DateUtils.getDateTime());
+        sportNews.setCreateTime(dateUtils.getCurrentDate());
         sportNewsMapper.insert(sportNews);
     }
 
@@ -42,7 +44,7 @@ public class SportNewsServiceImpl implements SportNewsService {
     @Override
     public void update(SportNews sportNews) {
         sportNews.setUpdateName(SecurityUtils.getUsername());
-        sportNews.setUpdateTime(DateUtils.getDateTime());
+        sportNews.setUpdateTime(dateUtils.getCurrentDate());
         sportNewsMapper.update(sportNews);
     }
 

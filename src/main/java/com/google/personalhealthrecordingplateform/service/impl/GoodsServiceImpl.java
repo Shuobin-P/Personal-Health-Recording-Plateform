@@ -36,11 +36,13 @@ import java.util.List;
 @Slf4j
 @Service
 public class GoodsServiceImpl implements GoodsService {
+    private final DateUtils dateUtils;
     private final GoodsMapper goodsMapper;
     private final PoiExcelService poiExcelService;
 
     @Autowired
-    public GoodsServiceImpl(GoodsMapper goodsMapper, PoiExcelService poiExcelService) {
+    public GoodsServiceImpl(DateUtils dateUtils, GoodsMapper goodsMapper, PoiExcelService poiExcelService) {
+        this.dateUtils = dateUtils;
         this.goodsMapper = goodsMapper;
         this.poiExcelService = poiExcelService;
     }
@@ -68,7 +70,7 @@ public class GoodsServiceImpl implements GoodsService {
                 if (null == goodsMapper.findGoodsIdByName(goodsImportExcelDTO.getName())) {
                     goods.setCreateTime(new Date());
                     goods.setCreateUserId(SecurityUtils.getUserId());
-                    goods.setAnnotation("管理员：" + SecurityUtils.getUsername() + "于" + DateUtils.getDateTime() + "将商品：" + goodsImportExcelDTO.getName() + "加入库存，数量：" + goodsImportExcelDTO.getNumber());
+                    goods.setAnnotation("管理员：" + SecurityUtils.getUsername() + "于" + dateUtils.getCurrentDate() + "将商品：" + goodsImportExcelDTO.getName() + "加入库存，数量：" + goodsImportExcelDTO.getNumber());
                     goodsList.add(goods);
                 }
             }
