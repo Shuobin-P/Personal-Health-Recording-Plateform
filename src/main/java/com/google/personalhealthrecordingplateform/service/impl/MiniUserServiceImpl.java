@@ -198,6 +198,7 @@ public class MiniUserServiceImpl implements MiniUserService {
             return Result.fail("请传递小程序用户唯一标识open_id");
         }
         redisUtils.delete("java_sport:sys_user:" + sysUser.getOpenId());
+        //FXIME 更新sysUser的头像链接，存入到七牛云，再存入数据库
         sysUserMapper.updateInfoByOpenId(sysUser);
         return Result.success("成功更新用户信息");
     }

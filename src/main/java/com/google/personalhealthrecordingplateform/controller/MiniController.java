@@ -50,10 +50,6 @@ public class MiniController {
 
     @GetMapping("/step/report")
     public Result getRecentFourWeeksSteps(@RequestHeader String Authorization) {
-        //统计最近四周的步数数据，今天这一周算第一周，又叫week1
-        //星期一的数据：命名为0
-        //星期二的数据：命名为1
-        //上一周的数据：命名为week2
         return miniUserService.getRecentFourWeeksSteps(Authorization);
     }
 
