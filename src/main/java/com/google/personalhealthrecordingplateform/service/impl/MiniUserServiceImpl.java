@@ -9,6 +9,7 @@ import com.google.personalhealthrecordingplateform.mapper.WxRunMapper;
 import com.google.personalhealthrecordingplateform.service.MiniUserService;
 import com.google.personalhealthrecordingplateform.util.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.message.BasicNameValuePair;
@@ -41,6 +42,7 @@ public class MiniUserServiceImpl implements MiniUserService {
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
+    private final QiniuUtils qiniuUtils;
     private final TokenUtils tokenUtils;
     private final RedisUtils redisUtils;
     private final DateUtils dateUtils;
@@ -50,7 +52,8 @@ public class MiniUserServiceImpl implements MiniUserService {
     private final UserDetailsService userDetailsService;
 
     @Autowired
-    public MiniUserServiceImpl(TokenUtils tokenUtils, RedisUtils redisUtils, DateUtils dateUtils, DecryptDataUtils decryptDataUtils, WxRunMapper wxRunMapper, SysUserMapper sysUserMapper, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
+    public MiniUserServiceImpl(QiniuUtils qiniuUtils, TokenUtils tokenUtils, RedisUtils redisUtils, DateUtils dateUtils, DecryptDataUtils decryptDataUtils, WxRunMapper wxRunMapper, SysUserMapper sysUserMapper, @Qualifier("userDetailsServiceImp") UserDetailsService userDetailsService) {
+        this.qiniuUtils = qiniuUtils;
         this.tokenUtils = tokenUtils;
         this.redisUtils = redisUtils;
         this.dateUtils = dateUtils;
@@ -193,12 +196,20 @@ public class MiniUserServiceImpl implements MiniUserService {
 
     @Transactional(rollbackFor = Throwable.class)
     @Override
-    public Result updateInfoByOpenId(SysUser sysUser) {
+    public Result updateInfoByOpenId(SysUser sysUser) throws URISyntaxException, IOException {
         if (StringUtils.isEmpty(sysUser.getOpenId())) {
             return Result.fail("请传递小程序用户唯一标识open_id");
         }
         redisUtils.delete("java_sport:sys_user:" + sysUser.getOpenId());
-        //FXIME 更新sysUser的头像链接，存入到七牛云，再存入数据库
+        //FIXME 更新sysUser的头像链接，存入到七牛云，再把URL存入数据库
+        //把HttpUtilsTest中的拿过来
+        CloseableHttpResponse response = HttpUtils.sendGet(sysUser.getAvatar());
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            String avatarURL = qiniuUtils.upload(response.getEntity().getContent(), sysUser.getName() + "avatar.jpeg");
+            sysUser.setAvatar(avatarURL);
+        } else {
+            return Result.fail(response.getStatusLine().getReasonPhrase());
+        }
         sysUserMapper.updateInfoByOpenId(sysUser);
         return Result.success("成功更新用户信息");
     }

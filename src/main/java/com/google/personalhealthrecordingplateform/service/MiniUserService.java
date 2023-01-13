@@ -47,5 +47,5 @@ public interface MiniUserService {
      * @param sysUser
      * @return
      */
-    Result updateInfoByOpenId(SysUser sysUser);
+    Result updateInfoByOpenId(SysUser sysUser) throws URISyntaxException, IOException;
 }

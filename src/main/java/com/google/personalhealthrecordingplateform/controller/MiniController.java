@@ -62,7 +62,7 @@ public class MiniController {
 
     @ApiOperation(value = "更新用户信息")
     @PostMapping("/update/info")
-    public Result updateInfo(@RequestBody SysUser sysUser) {
+    public Result updateInfo(@RequestBody SysUser sysUser) throws URISyntaxException, IOException {
         return miniUserService.updateInfoByOpenId(sysUser);
     }
 

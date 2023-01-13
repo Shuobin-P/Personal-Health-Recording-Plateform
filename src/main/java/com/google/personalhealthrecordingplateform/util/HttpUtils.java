@@ -25,6 +25,21 @@ import java.util.Map;
  * @date 2022/12/23 17:20
  */
 public class HttpUtils {
+    public static CloseableHttpResponse sendGet(String url) throws URISyntaxException, IOException {
+        CloseableHttpClient httpclient = null;
+        try {
+            httpclient = HttpClients.createDefault();
+            URI uri = new URIBuilder(url).build();
+            HttpGet httpGet = new HttpGet(uri);
+            return httpclient.execute(httpGet);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            httpclient.close();
+        }
+
+    }
+
     public static CloseableHttpResponse sendGet(String url, List<NameValuePair> paramPairList) throws URISyntaxException, IOException {
         CloseableHttpClient httpclient = null;
         try {
