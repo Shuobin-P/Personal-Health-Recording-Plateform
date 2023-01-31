@@ -1,0 +1,36 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: HeathRecordingPlateform
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      maxRequestSize: 100MB
+
+mybatis:
+  mapper-locations: mapper/*.xml
+  type-aliases-package: com.google.personalhealthrecordingplateform.entity
+
+jwt:
+  tokenHeader: Authorization
+  tokenHead: 'Bearer '
+  secret: bingbingbing
+  expiration: 1800000
+
+qiniu:
+  accessKey: VjqyGJIWeKMORqLsJR-3CMSBiKTxYF25wC5CSPbc
+  secretKey: adec1oMqUWZAUKPruXLwus2822HK9wMJwpTllO8J
+  bucketName: health-plateform-image
+  path: rn84b4df6.hn-bkt.clouddn.com
+
+sms:
+  accessKeyId: LTAI5tLkUWadYCENN8oDakAX
+  accessKeySecret: wyVuFu1ra3P3szFWp5GlXwCXpmi9rZ
+  signName: 彬哥的小站
+  templateId: SMS_262470443
+
+
