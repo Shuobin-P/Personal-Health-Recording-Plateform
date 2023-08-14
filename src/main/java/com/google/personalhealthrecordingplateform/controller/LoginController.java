@@ -30,7 +30,7 @@ public class LoginController {
     @ApiOperation(value = "用户登录接口")
     @PostMapping("/login")
     public Result login(@RequestBody LoginVO loginVo) {
-        log.info("进入登录接口");
+        log.info("进入登录接口 ");
         return sysUserService.login(loginVo);
     }
 
