@@ -34,7 +34,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         //设置缓存，在缓存中查找用户信息，若有信息，则返回，若无信息，则把信息从数据库中取出，并存入缓存中
         SysUser sysUser;
         //在缓存中
-        if (redisUtils.hasKey(username)) {
+        if (redisUtils.hasKey("java_sport:sys_user:" + username)) {
             sysUser = (SysUser) redisUtils.get("java_sport:sys_user:" + username);
             redisUtils.setExpiration("java_sport:sys_user:" + username, 600);
         } else {
