@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.personalhealthrecordingplateform.mapper.SysPermissionMapper">
+    <insert id="insert" parameterType="SysPermission">
+        INSERT INTO sys_permission(label, code, status)
+        VALUES (#{label}, #{code}, #{status})
+    </insert>
+
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM sys_permission
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="SysPermission">
+        UPDATE sys_permission
+        SET label  = #{label},
+            code   = #{code},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <!--分页查询之前得到的所有记录-->
+    <select id="findPage" resultType="SysPermission">
+        SELECT * FROM sys_permission
+        <if test="queryString != null and queryString.length > 0">
+            WHERE label LIKE concat('%', #{queryString}, '%') OR code LIKE concat('%', #{queryString}, '%')
+        </if>
+    </select>
+
+    <select id="findAll" resultType="SysPermission">
+        SELECT *
+        FROM sys_permission
+    </select>
+
+    <select id="findPermissionByRoleID" resultType="SysPermission" parameterType="Long">
+        SELECT *
+        FROM sys_permission
+        WHERE id IN (
+            SELECT permission_id
+            FROM role_permission
+            WHERE role_id = #{id}
+        )
+    </select>
+</mapper>

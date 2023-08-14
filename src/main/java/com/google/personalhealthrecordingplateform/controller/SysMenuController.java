@@ -50,7 +50,6 @@ public class SysMenuController {
         return sysMenuService.findParents();
     }
 
-
     /**
      * 前端的菜单管理页面数据来源
      * @param queryInfo

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.personalhealthrecordingplateform.mapper.SysRoleMapper">
+    <insert id="insert" parameterType="SysRole" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO sys_role(label, code, status)
+        VALUES (#{label}, #{code}, #{status})
+    </insert>
+
+    <insert id="insertMenus" parameterType="Long">
+        insert into role_menu
+        values (#{roleId}, #{menuId})
+    </insert>
+
+    <insert id="insertPermissions" parameterType="Long">
+        insert into role_permission
+        values (#{roleId}, #{permissionId})
+    </insert>
+
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM sys_role
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteMenus" parameterType="Long">
+        DELETE
+        FROM role_menu
+        WHERE role_id = #{id}
+    </delete>
+
+    <delete id="deletePermissions" parameterType="Long">
+        DELETE
+        FROM role_permission
+        WHERE role_id = #{id}
+    </delete>
+
+    <update id="update" parameterType="SysRole">
+        UPDATE sys_role
+        SET label  = #{label},
+            code   = #{code},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findPage" resultType="SysRole">
+        SELECT * FROM sys_role
+        <if test="queryString != null and queryString.length > 0">
+            WHERE label LIKE concat('%', #{queryString}, '%') OR code LIKE concat('%', #{queryString}, '%')
+        </if>
+    </select>
+
+    <select id="findAll" resultType="SysRole">
+        SELECT *
+        FROM sys_role
+    </select>
+    
+    <select id="findRoleByLabel" parameterType="String" resultType="SysRole">
+        SELECT *
+        FROM sys_role
+        WHERE label = #{label}
+    </select>
+
+
+</mapper>

@@ -45,8 +45,13 @@ public class SysUserController {
     @ApiOperation(value = "删除用户接口")
     @DeleteMapping("/delete/{id}")
     public Result delete(@PathVariable Long id) throws QiniuException {
-        qiniuUtils.delete(sysUserService.findAvatar(id));
-        sysUserService.delete(id);
+        try {
+            qiniuUtils.delete(sysUserService.findAvatar(id));
+        } catch (QiniuException e) {
+            e.printStackTrace();
+        } finally {
+            sysUserService.delete(id);
+        }
         return Result.success("删除成功");
     }
 
