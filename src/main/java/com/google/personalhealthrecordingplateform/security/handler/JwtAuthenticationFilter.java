@@ -54,6 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith(tokenHead)) {
             String token = header.substring(tokenHead.length());
             String username = tokenUtils.getUsernameByToken(token);
+            log.info("username为：" + username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (!tokenUtils.isExpired(token)) {
                     //使用JWT不是就已经能实现用户的登录状态保持吗？为什么还要使用下面这个，

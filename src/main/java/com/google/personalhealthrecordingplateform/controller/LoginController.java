@@ -43,6 +43,10 @@ public class LoginController {
         return Result.success("成功退出登录");
     }
 
+    /**
+     * 获取用户的拥有的菜单和相关的权限信息
+     * @return
+     */
     @ApiOperation(value = "获取用户信息")
     @GetMapping("/getInfo")
     public Result getUserInfo() {

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.personalhealthrecordingplateform.mapper.GoodsMapper">
+    <resultMap id="dtoMap" type="com.google.personalhealthrecordingplateform.dto.GoodsDTO">
+        <result property="imageUrl" column="image_url"></result>
+        <result property="modelType" column="model_type"></result>
+        <result property="controlMode" column="control_mode"></result>
+        <result property="mainFunction" column="main_function"></result>
+        <result property="wifiFunction" column="wifi_function"></result>
+        <result property="remark" column="annotation"></result>
+    </resultMap>
+
+    <resultMap id="mainMap" type="Goods">
+        <result property="createTime" column="create_time"></result>
+        <result property="imageUrl" column="image_url"></result>
+        <result property="modelType" column="model_type"></result>
+        <result property="controlMode" column="control_mode"></result>
+        <result property="mainFunction" column="main_function"></result>
+        <result property="wifiFunction" column="wifi_function"></result>
+    </resultMap>
+
+    <insert id="batchInsert">
+        INSERT INTO goods
+        VALUES
+        <foreach collection="goods" separator="," item="item">
+            (null,
+            #{item.name},
+            #{item.price},
+            #{item.number},
+            #{item.createTime},
+            #{item.createUserId},
+            #{item.imageUrl},
+            #{item.modelType},
+            #{item.controlMode},
+            #{item.mainFunction},
+            #{item.wifiFunction},
+            #{item.battery},
+            #{item.characteristic},
+            #{item.size},
+            #{item.other},
+            #{item.annotation}
+            )
+        </foreach>
+    </insert>
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM goods
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="Goods">
+        UPDATE goods
+        <set>
+            <if test="name != null and name.length > 0">
+                `name` = #{name},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="number != null">
+                `number` = #{number},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createUserId != null">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="imageUrl != null">
+                image_url = #{imageUrl},
+            </if>
+            <if test="modelType != null">
+                model_type = #{modelType},
+            </if>
+            <if test="controlMode != null">
+                control_mode = #{controlMode},
+            </if>
+            <if test="mainFunction != null">
+                main_function = #{mainFunction},
+            </if>
+            <if test="wifiFunction != null">
+                wifi_function = #{wifiFunction},
+            </if>
+            <if test="battery != null">
+                battery = #{battery},
+            </if>
+            <if test="characteristic != null">
+                characteristic = #{characteristic},
+            </if>
+            <if test="size != null">
+                `size` = #{size},
+            </if>
+            <if test="other != null">
+                `other` = #{other},
+            </if>
+            <if test="annotation != null">
+                annotation = #{annotation}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="findPage" parameterType="String" resultMap="dtoMap">
+        SELECT *
+        FROM goods
+        <if test="queryString != null and queryString.length > 0">
+            where `name` like concat('%', #{queryString}, '%')
+        </if>
+    </select>
+
+    <select id="findAll" resultMap="mainMap">
+        SELECT *
+        FROM goods;
+    </select>
+
+    <select id="findGoodsIdByName" resultType="Long" parameterType="String">
+        SELECT id
+        FROM goods
+        WHERE `name` = #{name};
+    </select>
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.personalhealthrecordingplateform.mapper.FoodTypeMapper">
+    <!-- 添加菜品分类 -->
+    <insert id="insert" parameterType="FoodType">
+        INSERT INTO food_type(title, icon)
+        VALUES (#{title}, #{icon})
+    </insert>
+
+    <!-- 删除菜品分类 -->
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM food_type
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 修改菜品分类 -->
+    <update id="update" parameterType="FoodType">
+        UPDATE food_type
+        <set>
+            <if test="title != null and title.length > 0">
+                title = #{title},
+            </if>
+            <if test="icon != null and icon.length > 0">
+                icon = #{icon},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="getAllFoodType" resultType="FoodType">
+        SELECT *
+        FROM food_type
+    </select>
+
+    <select id="findFoodTypePage" parameterType="java.lang.String" resultType="FoodType">
+        SELECT *
+        FROM food_type
+        <if test="queryString != null and queryString.length > 0">
+            where title LIKE CONCAT('%', #{queryString}, '%')
+        </if>
+    </select>
+
+    <select id="findTypeIDByTypeTitle" parameterType="String" resultType="Long">
+        SELECT id
+        FROM food_type
+        WHERE title = #{title}
+    </select>
+</mapper>
