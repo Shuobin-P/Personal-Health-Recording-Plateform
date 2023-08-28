@@ -53,6 +53,8 @@ public class ToolController {
     @PostMapping("/forget/password")
     public Result forgetPassword(@RequestBody MailVO mailVo) throws MessagingException {
         log.info("进入忘记密码方法");
+        log.info("遗忘用户输入的邮箱为：");
+        log.info(mailVo.receivers[0]);
         SysUser sysUser = sysUserService.findUserByEmail(mailVo.receivers[0]);
         if (sysUser == null) {
             return Result.fail("该邮箱未注册过账号");
@@ -80,6 +82,8 @@ public class ToolController {
         //          如果过期了，告知用户验证码已失效
         //          否则，返回一个一个token，并跳转到用户首页。
         // 如果错误，告知用户验证码错误。
+        log.info("电话号码：");
+        log.info(phoneNumber);
         SysUser sysUser = sysUserService.findUserByPhoneNumber(phoneNumber);
         if (sysUser == null) {
             return Result.fail("该电话号码没有注册过账号");
