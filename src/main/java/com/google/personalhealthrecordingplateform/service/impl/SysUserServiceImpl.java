@@ -115,7 +115,9 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     public SysUser findUserByEmail(String email) {
-        return sysUserMapper.findUserByEmail(email);
+        SysUser user = sysUserMapper.findUserByEmail(email);
+        log.info("user内容：", user);
+        return user;
     }
 
     @Override
